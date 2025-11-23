@@ -1,0 +1,18 @@
+appId: host.exp.Exponent
+---
+- launchApp
+# Wait for app to load
+- assertVisible:
+    id: "routine-list-screen"
+- waitForAnimationToEnd
+# Tap on first routine to view details (assuming at least one routine exists)
+- tapOn:
+    id: "routine-item-1"
+# Wait for detail screen to load
+- waitForAnimationToEnd
+- assertVisible:
+    id: "routine-detail-screen"
+- assertVisible:
+    id: "routine-name"
+- assertVisible: "Workout Days"
+

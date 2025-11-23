@@ -1,0 +1,48 @@
+version: "3.8"
+services:
+  xq-fitness-db:
+    image: ghcr.io/chauhaidang/xq-fitness-db:latest
+    networks:
+      - xq-network
+    ports:
+      - 5432:5432
+  xq-fitness-read-service:
+    image: ghcr.io/chauhaidang/xq-fitness-read-service:latest
+    networks:
+      - xq-network
+    ports:
+      - 8002:8080
+    environment:
+      DB_USER: xq_user
+      DB_PASSWORD: xq_password
+      DB_HOST: xq-fitness-db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://xq-fitness-db:5432/xq_fitness
+    depends_on:
+      - xq-fitness-db
+  xq-fitness-write-service:
+    image: ghcr.io/chauhaidang/xq-fitness-write-service:latest
+    networks:
+      - xq-network
+    ports:
+      - 8003:3000
+    environment:
+      DB_USER: xq_user
+      DB_PASSWORD: xq_password
+      DB_HOST: xq-fitness-db
+    depends_on:
+      - xq-fitness-db
+  xq-gateway:
+    image: nginx:alpine
+    ports:
+      - 8080:80
+    volumes:
+      - /Users/automation2/Documents/workspace/project/xq-app/xq-fitness/mobile/nginx-gateway.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - xq-network
+    depends_on:
+      - xq-fitness-db
+      - xq-fitness-read-service
+      - xq-fitness-write-service
+networks:
+  xq-network:
+    driver: bridge

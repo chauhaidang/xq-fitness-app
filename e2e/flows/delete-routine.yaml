@@ -1,0 +1,19 @@
+appId: host.exp.Exponent
+---
+- launchApp
+# Wait for app to load
+- assertVisible:
+    id: "routine-list-screen"
+- waitForAnimationToEnd
+# Assuming there's at least one routine to delete
+- tapOn:
+    id: "delete-routine-1"
+# Alert confirmation - Maestro will auto-confirm the delete action
+- assertVisible: "Delete"
+- tapOn: "Delete"
+# Wait for the deletion to complete
+- waitForAnimationToEnd
+# Verify the routine is removed (either item is gone or empty state appears)
+- assertNotVisible: 
+    id: "routine-item-1"
+

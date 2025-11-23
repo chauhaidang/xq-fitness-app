@@ -1,0 +1,41 @@
+appId: host.exp.Exponent
+---
+- launchApp
+# Wait for app to load
+- assertVisible:
+    id: "routine-list-screen"
+- waitForAnimationToEnd
+# Navigate to routine detail
+- tapOn:
+    id: "routine-item-1"
+- waitForAnimationToEnd
+- assertVisible:
+    id: "routine-detail-screen"
+# Edit existing workout day (assuming day with id 1 exists)
+- tapOn:
+    id: "edit-day-1"
+- waitForAnimationToEnd
+- assertVisible:
+    id: "manage-workout-day-screen"
+# Update day name
+- clearText:
+    id: "day-name-input"
+- inputText:
+    id: "day-name-input"
+    text: "Updated Push Day"
+# Update sets
+- clearText:
+    id: "sets-input-1"
+- inputText:
+    id: "sets-input-1"
+    text: "5"
+# Submit
+- tapOn:
+    id: "submit-button"
+# Wait for navigation back
+- waitForAnimationToEnd
+# Verify update
+- assertVisible:
+    id: "routine-detail-screen"
+- assertVisible: "Updated Push Day"
+

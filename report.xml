@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+  <testsuite name="Test Suite" device="iPhone SE (3rd generation) - iOS 18.3 - F0BB4440-5125-4983-A754-ECB7F8351A96" tests="1" failures="1" time="44.0">
+    <testcase id="create-routine" name="create-routine" classname="create-routine" time="44.0" status="ERROR">
+      <failure>Assertion is false: "Routines" is visible</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

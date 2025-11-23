@@ -1,0 +1,31 @@
+appId: host.exp.Exponent
+---
+- launchApp
+# Wait for app to load and check for the routine list screen
+- assertVisible:
+    id: "routine-list-screen"
+- waitForAnimationToEnd
+# Tap the create button
+- tapOn: 
+    id: "create-routine-button"
+# Wait for create screen to load
+- assertVisible:
+    id: "create-routine-screen"
+- waitForAnimationToEnd
+# Fill in the form
+- inputText: 
+    id: "routine-name-input"
+    text: "Test Routine"
+- inputText:
+    id: "routine-description-input"
+    text: "This is a test routine created by Maestro"
+# Submit the form
+- tapOn:
+    id: "submit-button"
+# Wait for navigation back and verify routine appears
+- waitForAnimationToEnd
+- assertVisible:
+    id: "routine-list-screen"
+# The routine name should appear in the list
+- assertVisible: "Test Routine"
+
