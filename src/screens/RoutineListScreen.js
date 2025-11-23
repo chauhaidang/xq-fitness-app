@@ -67,43 +67,66 @@ const RoutineListScreen = ({ navigation }) => {
   };
 
   const renderRoutine = ({ item }) => (
-    <TouchableOpacity
-      testID={`routine-item-${item.id}`}
-      style={commonStyles.card}
-      onPress={() => navigation.navigate('RoutineDetail', { routineId: item.id })}
-    >
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <View style={{ flex: 1 }}>
-          <Text testID={`routine-name-${item.id}`} style={commonStyles.subtitle}>{item.name}</Text>
-          {item.description && (
-            <Text style={commonStyles.textSecondary} numberOfLines={2}>
-              {item.description}
-            </Text>
-          )}
-          <View style={{ marginTop: spacing.xs }}>
-            <Text style={[commonStyles.textSecondary, { fontSize: 12 }]}>
-              {item.isActive ? '● Active' : '○ Inactive'}
-            </Text>
+    <View testID={`routine-item-${item.id}`} style={commonStyles.card}>
+      <TouchableOpacity
+        testID={`routine-item-touchable-${item.id}`}
+        onPress={() => navigation.navigate('RoutineDetail', { routineId: item.id })}
+        activeOpacity={0.7}
+      >
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <View style={{ flex: 1 }}>
+            <Text testID={`routine-name-${item.id}`} style={commonStyles.subtitle}>{item.name}</Text>
+            {item.description && (
+              <Text style={commonStyles.textSecondary} numberOfLines={2}>
+                {item.description}
+              </Text>
+            )}
+            <View style={{ marginTop: spacing.xs }}>
+              <Text style={[commonStyles.textSecondary, { fontSize: 12 }]}>
+                {item.isActive ? '● Active' : '○ Inactive'}
+              </Text>
+            </View>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-          <TouchableOpacity
-            testID={`edit-routine-${item.id}`}
-            onPress={() => navigation.navigate('EditRoutine', { routineId: item.id, routine: item })}
-            style={{ padding: spacing.sm }}
-          >
-            <Text style={{ color: colors.primary, fontWeight: '600' }}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            testID={`delete-routine-${item.id}`}
-            onPress={() => handleDelete(item.id, item.name)}
-            style={{ padding: spacing.sm }}
-          >
-            <Text style={{ color: colors.danger, fontWeight: '600' }}>Delete</Text>
-          </TouchableOpacity>
-        </View>
+      </TouchableOpacity>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center', marginTop: spacing.sm, justifyContent: 'flex-end' }}>
+        <TouchableOpacity
+          testID={`edit-routine-${item.id}`}
+          accessibilityLabel={`Edit routine ${item.name}`}
+          accessibilityRole="button"
+          onPress={() => navigation.navigate('EditRoutine', { routineId: item.id, routine: item })}
+          style={{ 
+            minWidth: 44,
+            minHeight: 44,
+            paddingHorizontal: spacing.md,
+            paddingVertical: spacing.sm,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{ color: colors.primary, fontWeight: '600' }}>Edit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          testID={`delete-routine-${item.id}`}
+          accessibilityLabel={`Delete routine ${item.name}`}
+          accessibilityRole="button"
+          accessibilityHint="Double tap to delete this routine"
+          onPress={() => handleDelete(item.id, item.name)}
+          style={{ 
+            minWidth: 44,
+            minHeight: 44,
+            paddingHorizontal: spacing.md,
+            paddingVertical: spacing.sm,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colors.danger + '15', // Light red background for better visibility
+            borderRadius: 6,
+          }}
+        >
+          <Text style={{ color: colors.danger, fontWeight: '600', fontSize: 14 }}>Delete</Text>
+        </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 
   if (loading && !refreshing) {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to switch Maestro test files between Expo Go and Standalone app IDs
+# Script to switch Maestro test files between Expo Go and Standalone bundle IDs
 # Run from project root: ./e2e/switch-app-id.sh [expo-go|standalone]
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

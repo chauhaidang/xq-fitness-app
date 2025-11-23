@@ -90,7 +90,7 @@ describe('RoutineListScreen', () => {
     );
     
     await waitFor(() => {
-      const routineItem = getByTestId('routine-item-1');
+      const routineItem = getByTestId('routine-item-touchable-1');
       fireEvent.press(routineItem);
       expect(mockNavigation.navigate).toHaveBeenCalledWith('RoutineDetail', {
         routineId: 1,
