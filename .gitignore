@@ -43,3 +43,5 @@ yarn-error.*
 /ios
 /android
 xq-compose.yml
+.idea
+node_modules
