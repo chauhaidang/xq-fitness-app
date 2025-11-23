@@ -21,7 +21,7 @@ web-build/
 *.key
 *.mobileprovision
 
-# Metro
+# Metrogit rm -r --cached . git add . git commit -am 'git cache cleared' git push
 .metro-health-check*
 
 # debug
@@ -45,3 +45,4 @@ yarn-error.*
 xq-compose.yml
 .idea
 node_modules
+coverage
