@@ -1,9 +1,13 @@
 import axios from 'axios';
+import Constants from 'expo-constants';
+
+// Get gateway URL from Expo config or fallback to localhost
+const GATEWAY_URL = Constants.expoConfig?.extra?.gatewayUrl || 'http://localhost:8080';
 
 // Change these URLs to match your backend services
 // For local development, use your machine's IP address instead of localhost
-const READ_SERVICE_URL = process.env.EXPO_PUBLIC_READ_SERVICE_URL || 'http://localhost:8080/xq-fitness-read-service/api/v1';
-const WRITE_SERVICE_URL = process.env.EXPO_PUBLIC_WRITE_SERVICE_URL || 'http://localhost:8080/xq-fitness-write-service/api/v1';
+const READ_SERVICE_URL = `${GATEWAY_URL}/xq-fitness-read-service/api/v1`;
+const WRITE_SERVICE_URL = `${GATEWAY_URL}/xq-fitness-write-service/api/v1`;
 
 // Create axios instances for each service
 const readApi = axios.create({

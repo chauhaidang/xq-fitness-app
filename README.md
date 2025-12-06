@@ -94,16 +94,6 @@ npm run test:watch    # Watch mode
 npm run test:coverage # With coverage report
 ```
 
-**Status:** ✅ 34 tests passing across 5 screen components
-
-### E2E Tests (Maestro)
-```bash
-maestro test e2e/flows/  # Run all E2E flows
-```
-
-**Status:** ✅ 6 E2E test flows ready
-
-See [TESTING_PLAN.md](./TESTING_PLAN.md) and [TESTING_SETUP.md](./TESTING_SETUP.md) for detailed testing documentation.
 
 ## Notes
 
@@ -111,4 +101,4 @@ See [TESTING_PLAN.md](./TESTING_PLAN.md) and [TESTING_SETUP.md](./TESTING_SETUP.
 - API calls are made to separate read and write microservices
 - All data is stored in PostgreSQL via the backend services
 - The app requires active network connection to function
-- Comprehensive test suite with 34 component tests and 6 E2E flows
+- Comprehensive test suite with 34 component tests and Detox E2E tests

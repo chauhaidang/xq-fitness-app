@@ -1,6 +1,0 @@
-# Maestro configuration
-# Use the actual app bundle ID for standalone/development builds
-# For Expo Go, use: host.exp.Exponent
-appId: com.xqfitness.app
-includeTags: []
-
