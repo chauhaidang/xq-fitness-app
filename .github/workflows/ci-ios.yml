@@ -87,11 +87,46 @@ jobs:
           ./patch-ios-simulator-fix.sh
           npm run bi
 
-      - name: Upload IPA to GitHub Packages
-        uses: actions/upload-artifact@v4
-        id: ios-artifact-step
+      - name: Get version from package.json
+        id: package-version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+          echo "Release version: $VERSION"
+
+      - name: Zip XQFitness.app
+        run: |
+          cd ios/build/Build/Products/Release-iphonesimulator
+          zip -r XQFitness-${{ steps.package-version.outputs.version }}.zip XQFitness.app
+          cd ../../../../..
+          mv ios/build/Build/Products/Release-iphonesimulator/XQFitness-${{ steps.package-version.outputs.version }}.zip .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: xq-ios
-          path: ios/build/Build/Products/Release-iphonesimulator/XQFitness.app
-          retention-days: 3
-          overwrite: true
+          tag_name: ${{ steps.package-version.outputs.tag }}
+          name: Release ${{ steps.package-version.outputs.version }}
+          body: |
+            ## XQ Fitness iOS Simulator Build
+            
+            **Version:** ${{ steps.package-version.outputs.version }}
+            **Commit:** ${{ github.sha }}
+            **Branch:** ${{ github.ref_name }}
+            
+            ### Installation
+            1. Download `XQFitness-${{ steps.package-version.outputs.version }}.zip`
+            2. Extract the zip file
+            3. Install on iOS Simulator using: `xcrun simctl install booted XQFitness.app`
+            
+            ### Build Info
+            - **Platform:** iOS Simulator
+            - **Configuration:** Release
+            - **macOS:** 14
+            - **Xcode:** 15.4
+          files: |
+            XQFitness-${{ steps.package-version.outputs.version }}.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
