@@ -79,17 +79,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
-      - name: Apply iOS simulator fix patch
-        run: |
-          if [ -f "patch-ios-simulator-fix.sh" ]; then
-            chmod +x patch-ios-simulator-fix.sh
-            ./patch-ios-simulator-fix.sh
-          fi
-
+        
       - name: Build App
         run: |
           npm run bip
+          chmod +x patch-ios-simulator-fix.sh
+          ./patch-ios-simulator-fix.sh
           cp build-sim.sh ios/build-sim.sh
           chmod +x ios/build-sim.sh
           npm run bi
