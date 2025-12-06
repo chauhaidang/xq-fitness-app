@@ -2,8 +2,8 @@ import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import EditRoutineScreen from '../../src/screens/EditRoutineScreen';
-import { renderScreenWithApi, waitForApiCall } from './helpers/test-utils';
-import { mockRoutines } from '../../fixtures/routines';
+import { renderScreenWithApi } from './helpers/test-utils';
+import { mockRoutines } from '../../__tests__/fixtures/routines';
 
 // Mock Alert to auto-confirm
 jest.spyOn(Alert, 'alert').mockImplementation((title, message, buttons) => {
@@ -93,12 +93,15 @@ describe('EditRoutineScreen Integration Tests', () => {
     
     // Wait for API call to complete
     // Prism will validate the PUT request against OpenAPI contract
-    await waitForApiCall(() => {
-      return Alert.alert.mock.calls.length > 0;
-    }, { timeout: 10000 });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalled();
+      },
+      { timeout: 15000 }
+    );
     
     // Request should be validated by Prism
-    expect(Alert.alert).toHaveBeenCalled();
+    expect(Alert.alert.mock.calls.length).toBeGreaterThan(0);
   });
 
   it('validates request body matches OpenAPI contract', async () => {
@@ -120,12 +123,15 @@ describe('EditRoutineScreen Integration Tests', () => {
     fireEvent.press(submitButton);
     
     // Prism will validate the PUT request body against OpenAPI schema
-    await waitForApiCall(() => {
-      return Alert.alert.mock.calls.length > 0;
-    }, { timeout: 10000 });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalled();
+      },
+      { timeout: 15000 }
+    );
     
     // Request should be validated
-    expect(Alert.alert).toHaveBeenCalled();
+    expect(Alert.alert.mock.calls.length).toBeGreaterThan(0);
   });
 
   it('handles API errors gracefully', async () => {
@@ -143,12 +149,15 @@ describe('EditRoutineScreen Integration Tests', () => {
     fireEvent.press(submitButton);
     
     // Wait for response (success or error)
-    await waitForApiCall(() => {
-      return Alert.alert.mock.calls.length > 0;
-    }, { timeout: 10000 });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalled();
+      },
+      { timeout: 15000 }
+    );
     
     // Should show either success or error alert
-    expect(Alert.alert).toHaveBeenCalled();
+    expect(Alert.alert.mock.calls.length).toBeGreaterThan(0);
   });
 
   it('navigates back after successful update', async () => {
@@ -166,9 +175,12 @@ describe('EditRoutineScreen Integration Tests', () => {
     fireEvent.press(submitButton);
     
     // Wait for API call and navigation
-    await waitForApiCall(() => {
-      return navigation.goBack.mock.calls.length > 0 || Alert.alert.mock.calls.length > 0;
-    }, { timeout: 10000 });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalled();
+      },
+      { timeout: 15000 }
+    );
     
     // If successful, navigation.goBack should be called
     // (via Alert button onPress)

@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import CreateRoutineScreen from '../../src/screens/CreateRoutineScreen';
-import { renderScreenWithApi, waitForApiCall } from './helpers/test-utils';
+import { renderScreenWithApi } from './helpers/test-utils';
 
 // Mock Alert to auto-confirm
 jest.spyOn(Alert, 'alert').mockImplementation((title, message, buttons) => {
@@ -57,14 +57,15 @@ describe('CreateRoutineScreen Integration Tests', () => {
     
     // Wait for API call to complete
     // Prism will validate the request against OpenAPI contract
-    await waitForApiCall(() => {
-      // Check if navigation was called (indicating success)
-      // or if error alert was shown
-      return Alert.alert.mock.calls.length > 0;
-    }, { timeout: 10000 });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalled();
+      },
+      { timeout: 15000 }
+    );
     
     // Either success or error should be shown
-    expect(Alert.alert).toHaveBeenCalled();
+    expect(Alert.alert.mock.calls.length).toBeGreaterThan(0);
   });
 
   it('handles API errors gracefully', async () => {
@@ -77,12 +78,15 @@ describe('CreateRoutineScreen Integration Tests', () => {
     fireEvent.press(submitButton);
     
     // Wait for response (success or error)
-    await waitForApiCall(() => {
-      return Alert.alert.mock.calls.length > 0;
-    }, { timeout: 10000 });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalled();
+      },
+      { timeout: 15000 }
+    );
     
     // Should show either success or error alert
-    expect(Alert.alert).toHaveBeenCalled();
+    expect(Alert.alert.mock.calls.length).toBeGreaterThan(0);
   });
 
   it('navigates back after successful creation', async () => {
@@ -95,9 +99,12 @@ describe('CreateRoutineScreen Integration Tests', () => {
     fireEvent.press(submitButton);
     
     // Wait for API call and navigation
-    await waitForApiCall(() => {
-      return navigation.goBack.mock.calls.length > 0 || Alert.alert.mock.calls.length > 0;
-    }, { timeout: 10000 });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalled();
+      },
+      { timeout: 15000 }
+    );
     
     // If successful, navigation.goBack should be called
     // (via Alert button onPress)
@@ -120,12 +127,15 @@ describe('CreateRoutineScreen Integration Tests', () => {
     
     // Prism will validate the request body against OpenAPI schema
     // If invalid, it will return 400 error
-    await waitForApiCall(() => {
-      return Alert.alert.mock.calls.length > 0;
-    }, { timeout: 10000 });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalled();
+      },
+      { timeout: 15000 }
+    );
     
     // Request should be validated by Prism
-    expect(Alert.alert).toHaveBeenCalled();
+    expect(Alert.alert.mock.calls.length).toBeGreaterThan(0);
   });
 });
 

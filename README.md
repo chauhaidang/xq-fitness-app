@@ -102,3 +102,8 @@ npm run test:coverage # With coverage report
 - All data is stored in PostgreSQL via the backend services
 - The app requires active network connection to function
 - Comprehensive test suite with 34 component tests and Detox E2E tests
+
+
+## Useful commands:
+`xcrun xctrace list devices` list devices
+`ios-deploy --id <DEVICE_UDID> --bundle <PATH_TO_IPA>` deploy ipa to device
