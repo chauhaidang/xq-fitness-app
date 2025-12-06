@@ -70,6 +70,7 @@ jobs:
         run: |
           npm run bip
           cp build-sim.sh ios/build-sim.sh
+          ./patch-ios-simulator-fix.sh
           npm run bi
 
       - name: Upload IPA to GitHub Packages
