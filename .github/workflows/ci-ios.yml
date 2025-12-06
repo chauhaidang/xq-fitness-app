@@ -66,6 +66,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Patch expo-dev-menu (fix TARGET_IPHONE_SIMULATOR)
+        run: ./patch-ios-simulator-fix.sh
+
       - name: Build App
         run: |
           npm run bip
