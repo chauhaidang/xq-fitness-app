@@ -1,0 +1,82 @@
+name: Build and Publish iOS APP
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - '.github/**'
+      - '.gitignore'
+      - 'LICENSE'
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run unit tests
+        run: npm run test:unit
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: xq-ios-unit-coverage
+          path: coverage/lcov.info
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build App
+        run: |
+          npm run bip
+          cp build-sim.sh ios/build-sim.sh
+          npm run bi
+
+      - name: Upload IPA to GitHub Packages
+        uses: actions/upload-artifact@v4
+        id: ios-artifact-step
+        with:
+          name: xq-ios
+          path: ios/build/Products/Release-iphonesimulator/XQFitness.app/
+          retention-days: 3
+          overwrite: true
