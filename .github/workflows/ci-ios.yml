@@ -79,14 +79,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        
+
       - name: Build App
         run: |
           npm run bip
           chmod +x patch-ios-simulator-fix.sh
           ./patch-ios-simulator-fix.sh
-          cp build-sim.sh ios/build-sim.sh
-          chmod +x ios/build-sim.sh
           npm run bi
 
       - name: Upload IPA to GitHub Packages
@@ -94,6 +92,6 @@ jobs:
         id: ios-artifact-step
         with:
           name: xq-ios
-          path: ios/build/Products/Release-iphonesimulator/XQFitness.app/
+          path: ios/build/Build/Products/Release-iphonesimulator/XQFitness.app
           retention-days: 3
           overwrite: true
