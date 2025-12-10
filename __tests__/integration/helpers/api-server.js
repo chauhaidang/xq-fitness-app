@@ -16,6 +16,7 @@ let writeServiceProcess = null;
 const startPrismServers = async () => {
   return new Promise((resolve, reject) => {
     // Start read service
+    // --errors flag enables strict validation: returns HTTP errors for invalid requests
     readServiceProcess = spawn('npx', [
       'prism',
       'mock',
@@ -24,12 +25,14 @@ const startPrismServers = async () => {
       READ_SERVICE_PORT.toString(),
       '--host',
       '0.0.0.0',
+      '--errors', // Enable strict validation - returns errors for invalid requests
     ], {
       cwd: process.cwd(),
       stdio: 'pipe',
     });
 
     // Start write service
+    // --errors flag enables strict validation: returns HTTP errors for invalid requests
     writeServiceProcess = spawn('npx', [
       'prism',
       'mock',
@@ -38,6 +41,7 @@ const startPrismServers = async () => {
       WRITE_SERVICE_PORT.toString(),
       '--host',
       '0.0.0.0',
+      '--errors', // Enable strict validation - returns errors for invalid requests
     ], {
       cwd: process.cwd(),
       stdio: 'pipe',

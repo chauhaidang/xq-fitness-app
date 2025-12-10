@@ -154,5 +154,35 @@ describe('ManageWorkoutDayScreen', () => {
       expect(api.createWorkoutDay).not.toHaveBeenCalled();
     });
   });
+
+  it('updates existing workout day sets using workoutDayId and muscleGroupId', async () => {
+    api.updateWorkoutDay.mockResolvedValue(mockWorkoutDays[0]);
+    api.updateWorkoutDaySet.mockResolvedValue({ id: 1 });
+    
+    const { getByTestId } = render(
+      <ManageWorkoutDayScreen navigation={mockNavigation} route={editRoute} />
+    );
+    
+    await waitFor(async () => {
+      const setsInput = getByTestId('sets-input-1');
+      const submitButton = getByTestId('submit-button');
+      
+      // Update the number of sets for an existing muscle group
+      fireEvent.changeText(setsInput, '5');
+      fireEvent.press(submitButton);
+    });
+    
+    await waitFor(() => {
+      expect(api.updateWorkoutDay).toHaveBeenCalled();
+      // Verify updateWorkoutDaySet is called with workoutDayId and muscleGroupId
+      expect(api.updateWorkoutDaySet).toHaveBeenCalledWith(
+        0, // setId placeholder (ignored when query params are used)
+        { numberOfSets: 5 },
+        mockWorkoutDays[0].id, // workoutDayId
+        1 // muscleGroupId
+      );
+      expect(mockNavigation.goBack).toHaveBeenCalled();
+    });
+  });
 });
 

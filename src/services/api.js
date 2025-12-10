@@ -83,8 +83,16 @@ export const createWorkoutDaySet = async (data) => {
   return response.data;
 };
 
-export const updateWorkoutDaySet = async (setId, data) => {
-  const response = await writeApi.put(`/workout-day-sets/${setId}`, data);
+export const updateWorkoutDaySet = async (setId, data, workoutDayId = null, muscleGroupId = null) => {
+  let url = `/workout-day-sets/${setId}`;
+  
+  // If workoutDayId and muscleGroupId are provided, use query parameters
+  // The setId in the path will be ignored by the API when query params are present
+  if (workoutDayId !== null && muscleGroupId !== null) {
+    url = `/workout-day-sets/0?workoutDayId=${workoutDayId}&muscleGroupId=${muscleGroupId}`;
+  }
+  
+  const response = await writeApi.put(url, data);
   return response.data;
 };
 

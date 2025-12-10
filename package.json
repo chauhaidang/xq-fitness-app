@@ -14,7 +14,7 @@
     "test:integration": "jest --config=jest.integration.config.js",
     "test:integration:watch": "jest --config=jest.integration.config.js --watch",
     "test:all": "npm run test:unit && npm run test:integration",
-    "mock:api": "prism mock api/read-service-api.yaml api/write-service-api.yaml",
+    "mock:api": "prism mock api/read-service-api.yaml api/write-service-api.yaml --errors",
     "bip": "expo prebuild --no-install --platform ios && cp build-sim.sh ios/build-sim.sh && chmod +x ios/build-sim.sh",
     "bi": "cd ios && pod update && pod install && sh ./build-sim.sh && cd ..",
     "deploy-sim": "./deploy-sim.sh",

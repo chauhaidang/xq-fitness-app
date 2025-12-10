@@ -140,8 +140,8 @@ const ManageWorkoutDayScreen = ({ route, navigation }) => {
       for (const [muscleGroupId, data] of Object.entries(selectedSets)) {
         const numberOfSets = parseInt(data.numberOfSets);
         if (data.setId) {
-          // Update existing set
-          await updateWorkoutDaySet(data.setId, { numberOfSets });
+          // Update existing set using workoutDayId and muscleGroupId (more reliable than setId)
+          await updateWorkoutDaySet(0, { numberOfSets }, workoutDayId, parseInt(muscleGroupId));
         } else {
           // Create new set
           await createWorkoutDaySet({

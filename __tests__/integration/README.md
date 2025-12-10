@@ -169,11 +169,34 @@ Prism automatically validates:
 - Request method (GET, POST, PUT, DELETE)
 - Request path parameters
 - Request query parameters
-- Request body schema
+- Request body schema (structure, required fields, data types)
 - Response status codes
 - Response body schema
 
-If a request doesn't match the OpenAPI contract, Prism will return a validation error.
+**What Happens with Incorrect Payloads:**
+
+Prism runs with the `--errors` flag enabled, which means:
+
+1. **Invalid Request Body**: If the request body doesn't match the OpenAPI schema:
+   - Prism returns HTTP **422 Unprocessable Entity** or **400 Bad Request**
+   - Response includes detailed validation error messages
+   - Example: Missing required field `numberOfSets` → 422 error with details
+
+2. **Invalid Query Parameters**: If query parameters are missing or invalid:
+   - Prism returns HTTP **400 Bad Request**
+   - Example: Missing `workoutDayId` when required → 400 error
+
+3. **Invalid Path Parameters**: If path parameters don't match the spec:
+   - Prism returns HTTP **404 Not Found** or **400 Bad Request**
+   - Example: Invalid `setId` format → 400 error
+
+4. **Wrong HTTP Method**: If using wrong method (e.g., POST instead of PUT):
+   - Prism returns HTTP **405 Method Not Allowed**
+
+**In Your Tests:**
+- If Prism validation fails, your app receives an error response
+- Tests should verify that error handling works correctly
+- Successful tests confirm the request matched the OpenAPI contract
 
 ## Important Notes
 
