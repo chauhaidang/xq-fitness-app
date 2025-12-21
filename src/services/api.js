@@ -9,6 +9,43 @@ const GATEWAY_URL = Constants.expoConfig?.extra?.gatewayUrl || 'http://localhost
 const READ_SERVICE_URL = `${GATEWAY_URL}/xq-fitness-read-service/api/v1`;
 const WRITE_SERVICE_URL = `${GATEWAY_URL}/xq-fitness-write-service/api/v1`;
 
+/**
+ * Safe JSON stringify that handles circular references
+ * @param {any} obj - Object to stringify
+ * @param {number} space - Number of spaces for indentation
+ * @returns {string} JSON string or error message if stringification fails
+ */
+const safeStringify = (obj, space = 2) => {
+  const visited = new WeakSet();
+  
+  const replacer = (key, value) => {
+    // Handle circular references
+    if (typeof value === 'object' && value !== null) {
+      if (visited.has(value)) {
+        return '[Circular Reference]';
+      }
+      visited.add(value);
+    }
+    return value;
+  };
+
+  try {
+    return JSON.stringify(obj, replacer, space);
+  } catch (error) {
+    // Fallback: try to stringify with error message
+    try {
+      return JSON.stringify({
+        error: 'Failed to stringify object',
+        message: error.message,
+        type: typeof obj,
+      }, null, space);
+    } catch {
+      // Last resort: return a simple error message
+      return `[Error: Unable to stringify object - ${error.message}]`;
+    }
+  }
+};
+
 // Helper function to log API requests and responses
 const setupApiLogging = (apiInstance, serviceName) => {
   // Request interceptor
@@ -31,7 +68,7 @@ const setupApiLogging = (apiInstance, serviceName) => {
         logData.queryParams = config.params;
       }
 
-      console.log(`[API Request - ${serviceName}]`, JSON.stringify(logData, null, 2));
+      console.log(`[API Request - ${serviceName}]`, safeStringify(logData, 2));
       return config;
     },
     (error) => {
@@ -52,7 +89,7 @@ const setupApiLogging = (apiInstance, serviceName) => {
         responseBody: response.data,
       };
 
-      console.log(`[API Response - ${serviceName}]`, JSON.stringify(logData, null, 2));
+      console.log(`[API Response - ${serviceName}]`, safeStringify(logData, 2));
       return response;
     },
     (error) => {
@@ -66,7 +103,7 @@ const setupApiLogging = (apiInstance, serviceName) => {
         responseBody: error.response?.data,
       };
 
-      console.error(`[API Error - ${serviceName}]`, JSON.stringify(logData, null, 2));
+      console.error(`[API Error - ${serviceName}]`, safeStringify(logData, 2));
       return Promise.reject(error);
     }
   );
