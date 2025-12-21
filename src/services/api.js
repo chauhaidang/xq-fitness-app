@@ -46,33 +46,40 @@ const safeStringify = (obj, space = 2) => {
   }
 };
 
+// Check if API logging is enabled via environment variable
+const isApiLoggingEnabled = process.env.ENABLE_API_LOGGING === 'true';
+
 // Helper function to log API requests and responses
 const setupApiLogging = (apiInstance, serviceName) => {
   // Request interceptor
   apiInstance.interceptors.request.use(
     (config) => {
-      const logData = {
-        service: serviceName,
-        method: config.method?.toUpperCase(),
-        url: `${config.baseURL}${config.url}`,
-        headers: config.headers,
-      };
+      if (isApiLoggingEnabled) {
+        const logData = {
+          service: serviceName,
+          method: config.method?.toUpperCase(),
+          url: `${config.baseURL}${config.url}`,
+          headers: config.headers,
+        };
 
-      // Log request body for POST, PUT, PATCH requests
-      if (config.data && ['post', 'put', 'patch'].includes(config.method?.toLowerCase())) {
-        logData.requestBody = config.data;
+        // Log request body for POST, PUT, PATCH requests
+        if (config.data && ['post', 'put', 'patch'].includes(config.method?.toLowerCase())) {
+          logData.requestBody = config.data;
+        }
+
+        // Log query parameters for GET requests
+        if (config.params) {
+          logData.queryParams = config.params;
+        }
+
+        console.log(`[API Request - ${serviceName}]`, safeStringify(logData, 2));
       }
-
-      // Log query parameters for GET requests
-      if (config.params) {
-        logData.queryParams = config.params;
-      }
-
-      console.log(`[API Request - ${serviceName}]`, safeStringify(logData, 2));
       return config;
     },
     (error) => {
-      console.error(`[API Request Error - ${serviceName}]`, error);
+      if (isApiLoggingEnabled) {
+        console.error(`[API Request Error - ${serviceName}]`, error);
+      }
       return Promise.reject(error);
     }
   );
@@ -80,30 +87,34 @@ const setupApiLogging = (apiInstance, serviceName) => {
   // Response interceptor
   apiInstance.interceptors.response.use(
     (response) => {
-      const logData = {
-        service: serviceName,
-        method: response.config.method?.toUpperCase(),
-        url: `${response.config.baseURL}${response.config.url}`,
-        status: response.status,
-        statusText: response.statusText,
-        responseBody: response.data,
-      };
+      if (isApiLoggingEnabled) {
+        const logData = {
+          service: serviceName,
+          method: response.config.method?.toUpperCase(),
+          url: `${response.config.baseURL}${response.config.url}`,
+          status: response.status,
+          statusText: response.statusText,
+          responseBody: response.data,
+        };
 
-      console.log(`[API Response - ${serviceName}]`, safeStringify(logData, 2));
+        console.log(`[API Response - ${serviceName}]`, safeStringify(logData, 2));
+      }
       return response;
     },
     (error) => {
-      const logData = {
-        service: serviceName,
-        method: error.config?.method?.toUpperCase(),
-        url: error.config ? `${error.config.baseURL}${error.config.url}` : 'Unknown',
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        errorMessage: error.message,
-        responseBody: error.response?.data,
-      };
+      if (isApiLoggingEnabled) {
+        const logData = {
+          service: serviceName,
+          method: error.config?.method?.toUpperCase(),
+          url: error.config ? `${error.config.baseURL}${error.config.url}` : 'Unknown',
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          errorMessage: error.message,
+          responseBody: error.response?.data,
+        };
 
-      console.error(`[API Error - ${serviceName}]`, safeStringify(logData, 2));
+        console.error(`[API Error - ${serviceName}]`, safeStringify(logData, 2));
+      }
       return Promise.reject(error);
     }
   );

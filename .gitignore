@@ -46,3 +46,4 @@ xq-compose.yml
 .idea
 node_modules
 coverage
+__tests__/integration/tsr
