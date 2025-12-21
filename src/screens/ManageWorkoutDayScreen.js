@@ -115,7 +115,7 @@ const ManageWorkoutDayScreen = ({ route, navigation }) => {
         });
       } else {
         const newDay = await createWorkoutDay({
-          routineId,
+          routineId: parseInt(routineId),
           dayNumber: parseInt(dayNumber),
           dayName: dayName.trim(),
           notes: notes.trim() || null,

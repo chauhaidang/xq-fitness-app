@@ -21,5 +21,7 @@ module.exports = {
   },
   testEnvironment: 'node',
   testTimeout: 30000, // 30 seconds for integration tests
+  maxWorkers: 1,
+  globalTeardown: '<rootDir>/__tests__/integration/teardown.js',
 };
 

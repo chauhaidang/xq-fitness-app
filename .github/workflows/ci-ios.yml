@@ -10,6 +10,14 @@ on:
       - '.github/**'
       - '.gitignore'
       - 'LICENSE'
+
+env:
+  REGISTRY: ghcr.io
+  GITHUB_OWNER: ${{ github.repository_owner }}
+  GITHUB_ACTOR: ${{ github.actor }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   unit:
     runs-on: ubuntu-latest
@@ -44,12 +52,28 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '20'
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com/'
+          scope: '@chauhaidang'
+
+      - name: Install global tools
+        run: |
+          npm install -g @chauhaidang/xq-test-infra
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+      
+      - name: Start up environment
+        run: xq-infra generate -f ./test-env && xq-infra up
 
       - name: Run integration tests
         run: npm run test:integration
+      
+      - name: Stop environment
+        if: always()
+        run: |
+          xq-infra logs
+          xq-infra down
 
   build:
     runs-on: macos-14  # Pin to macOS 14 for consistency (macos-latest now points to macOS 15)

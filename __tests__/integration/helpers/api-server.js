@@ -1,5 +1,4 @@
 const { spawn } = require('child_process');
-const axios = require('axios');
 
 const READ_SERVICE_PORT = 4010;
 const WRITE_SERVICE_PORT = 4011;
@@ -8,15 +7,50 @@ const WRITE_SERVICE_URL = `http://localhost:${WRITE_SERVICE_PORT}`;
 
 let readServiceProcess = null;
 let writeServiceProcess = null;
+let serversStarting = false;
+let serversStarted = false;
+
 
 /**
  * Start Prism mock servers for read and write services
+ * Uses singleton pattern to ensure servers only start once
  * @returns {Promise<void>}
  */
 const startPrismServers = async () => {
+  // Singleton: if servers are already started or starting, wait for them
+  if (serversStarted) {
+    return Promise.resolve();
+  }
+
+  if (serversStarting) {
+    // Wait for the ongoing start to complete
+    return new Promise((resolve) => {
+      const checkInterval = setInterval(() => {
+        if (serversStarted) {
+          clearInterval(checkInterval);
+          resolve();
+        }
+      }, 100);
+      // Timeout after 30 seconds
+      setTimeout(() => {
+        clearInterval(checkInterval);
+        resolve();
+      }, 30000);
+    });
+  }
+
+  serversStarting = true;
+
   return new Promise((resolve, reject) => {
-    // Start read service
-    // --errors flag enables strict validation: returns HTTP errors for invalid requests
+    // Check if processes are already running
+    if (readServiceProcess && writeServiceProcess) {
+      serversStarting = false;
+      serversStarted = true;
+      resolve();
+      return;
+    }
+
+    // Start read service Prism server
     readServiceProcess = spawn('npx', [
       'prism',
       'mock',
@@ -31,8 +65,7 @@ const startPrismServers = async () => {
       stdio: 'pipe',
     });
 
-    // Start write service
-    // --errors flag enables strict validation: returns HTTP errors for invalid requests
+    // Start write service Prism server
     writeServiceProcess = spawn('npx', [
       'prism',
       'mock',
@@ -52,6 +85,8 @@ const startPrismServers = async () => {
 
     const checkReady = () => {
       if (readServiceReady && writeServiceReady) {
+        serversStarting = false;
+        serversStarted = true;
         resolve();
       }
     };
@@ -100,11 +135,13 @@ const startPrismServers = async () => {
     // Handle errors
     readServiceProcess.on('error', (error) => {
       console.error('Read service error:', error);
+      serversStarting = false;
       reject(error);
     });
 
     writeServiceProcess.on('error', (error) => {
       console.error('Write service error:', error);
+      serversStarting = false;
       reject(error);
     });
   });
@@ -116,6 +153,9 @@ const startPrismServers = async () => {
  */
 const stopPrismServers = async () => {
   return new Promise((resolve) => {
+    serversStarted = false;
+    serversStarting = false;
+
     if (readServiceProcess) {
       readServiceProcess.kill();
       readServiceProcess = null;
@@ -143,25 +183,16 @@ const resetApiServer = async () => {
 
 /**
  * Configure app to use mock server URLs
- * This overrides the Expo config gateway URL
+ * Returns direct Prism server URLs for integration tests
  * 
- * Note: The API service constructs URLs as:
- * - READ_SERVICE_URL = `${GATEWAY_URL}/xq-fitness-read-service/api/v1`
- * - WRITE_SERVICE_URL = `${GATEWAY_URL}/xq-fitness-write-service/api/v1`
- * 
- * Prism serves OpenAPI specs directly, so we need to configure the gateway URL
- * to point to Prism, and Prism will handle the path routing based on the OpenAPI spec.
+ * Integration tests point directly to Prism servers:
+ * - Read Service: http://localhost:4010/api/v1
+ * - Write Service: http://localhost:4011/api/v1
  */
 const configureMockServerUrls = () => {
-  // Set gateway URL to point to read service port
-  // The API service will construct full paths
-  // Prism will handle routing based on OpenAPI spec paths
-  process.env.GATEWAY_URL = `http://localhost:${READ_SERVICE_PORT}`;
-  
   return {
-    readServiceUrl: READ_SERVICE_URL,
-    writeServiceUrl: WRITE_SERVICE_URL,
-    gatewayUrl: `http://localhost:${READ_SERVICE_PORT}`,
+    readServiceUrl: `${READ_SERVICE_URL}/api/v1`,
+    writeServiceUrl: `${WRITE_SERVICE_URL}/api/v1`,
   };
 };
 

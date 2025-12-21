@@ -9,6 +9,7 @@ import RoutineDetailScreen from '../screens/RoutineDetailScreen';
 import CreateRoutineScreen from '../screens/CreateRoutineScreen';
 import EditRoutineScreen from '../screens/EditRoutineScreen';
 import ManageWorkoutDayScreen from '../screens/ManageWorkoutDayScreen';
+import WeeklyReportScreen from '../screens/WeeklyReportScreen';
 
 const Stack = createStackNavigator();
 
@@ -51,6 +52,11 @@ const AppNavigator = () => {
           name="ManageWorkoutDay"
           component={ManageWorkoutDayScreen}
           options={{ title: 'Manage Workout Day' }}
+        />
+        <Stack.Screen
+          name="WeeklyReport"
+          component={WeeklyReportScreen}
+          options={{ title: 'Weekly Report' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

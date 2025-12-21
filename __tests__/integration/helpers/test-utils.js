@@ -2,23 +2,12 @@ import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Constants from 'expo-constants';
-import {
-  configureMockServerUrls,
-  READ_SERVICE_URL,
-  WRITE_SERVICE_URL,
-} from './api-server';
-
-// Override Expo config to use mock server URLs
-const mockUrls = configureMockServerUrls();
-if (Constants.expoConfig?.extra) {
-  Constants.expoConfig.extra.gatewayUrl = mockUrls.gatewayUrl;
-}
+import { createRoutine, createWorkoutDay, createWorkoutDaySet } from '../../../src/services/api';
 
 /**
  * Render a screen with real API calls (not mocked)
  * This is similar to the unit test renderScreen but ensures API calls
- * go to the Prism mock server
+ * go to the actual gateway URL
  * 
  * @param {React.Component} ScreenComponent - The screen component to render
  * @param {Object} options - Configuration options
@@ -108,13 +97,12 @@ export const waitForApiCall = async (condition, options = {}) => {
 
 /**
  * Reset API server state between tests
- * Note: Prism doesn't maintain state, but this can be used for future state management
+ * Note: This can be used for future state management if needed
  * 
  * @returns {Promise<void>}
  */
 export const resetApiServer = async () => {
-  // Prism doesn't maintain state between requests
-  // This is a placeholder for any future state management
+  // Placeholder for any future state management
   return Promise.resolve();
 };
 
@@ -144,5 +132,55 @@ export const waitForLoadingToFinish = async (queryByFn, loadingText = 'Loading',
   return waitFor(() => {
     expect(queryByFn(loadingText)).toBeNull();
   }, { timeout: 10000, ...options });
+};
+
+/**
+ * Create a test routine with optional workout days
+ * This helper creates test data needed for integration tests
+ * 
+ * @param {Object} options - Options for creating test routine
+ * @param {string} options.name - Routine name (default: 'Test Routine')
+ * @param {string} options.description - Routine description (default: 'Test Description')
+ * @param {boolean} options.isActive - Whether routine is active (default: true)
+ * @param {Array} options.workoutDays - Array of workout day configs to create
+ * @returns {Promise<Object>} Created routine object with id
+ */
+export const createTestRoutine = async (options = {}) => {
+  const {
+    name = `Test Routine ${Date.now()}`,
+    description = 'Test Description',
+    isActive = true,
+    workoutDays = [],
+  } = options;
+
+  try {
+    const routine = await createRoutine({ name, description, isActive });
+    
+    // Create workout days if provided
+    for (const dayConfig of workoutDays) {
+      const workoutDay = await createWorkoutDay({
+        routineId: parseInt(routine.id), // Ensure routineId is an integer
+        dayNumber: parseInt(dayConfig.dayNumber),
+        dayName: dayConfig.dayName,
+        notes: dayConfig.notes || null,
+      });
+
+      // Create sets if provided
+      if (dayConfig.sets) {
+        for (const setConfig of dayConfig.sets) {
+          await createWorkoutDaySet({
+            workoutDayId: parseInt(workoutDay.id), // Ensure workoutDayId is an integer
+            muscleGroupId: parseInt(setConfig.muscleGroupId), // Ensure muscleGroupId is an integer
+            numberOfSets: parseInt(setConfig.numberOfSets), // Ensure numberOfSets is an integer
+          });
+        }
+      }
+    }
+
+    return routine;
+  } catch (error) {
+    console.error('Error creating test routine:', error);
+    throw error;
+  }
 };
 

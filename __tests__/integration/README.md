@@ -1,48 +1,61 @@
-# Integration Test Strategy with Contract-Based Mocking
+# Integration Test Strategy
 
 ## Overview
 
-This directory contains integration tests that test complete screen behavior with real API integration. Tests use a contract-based mock server (Prism) that validates requests/responses against OpenAPI specs from the `/api` directory. This ensures tests verify actual API contracts while maintaining fast, isolated test execution.
+This directory contains integration tests that test complete screen behavior with real API integration. Tests call the actual gateway URL directly, making real API calls to backend services. This ensures tests verify actual API integration and end-to-end flows.
 
 ## Key Concepts
 
-### Contract-Based Testing
+### Real API Integration
 
-Integration tests use **Prism**, a contract-based mock server that:
-- Validates request bodies against OpenAPI schemas
-- Returns responses matching OpenAPI response schemas
-- Rejects invalid requests (contract validation)
-- Supports dynamic responses based on request parameters
+Integration tests make **real API calls** to the gateway:
+- No mocks or stubs
+- Real network requests to backend services
+- Tests actual API contracts and responses
+- Requires gateway and backend services to be running
 
 ### Difference from Unit Tests
 
 | Aspect | Unit Tests | Integration Tests |
 |--------|-----------|-------------------|
 | **Location** | `__tests__/screens/*.test.js` | `__tests__/integration/*.integration.test.js` |
-| **API Mocking** | `jest.mock('../../src/services/api')` | Real API calls to Prism server |
-| **Contract Validation** | None | Validated against OpenAPI specs |
+| **API Mocking** | `jest.mock('../../src/services/api')` | Real API calls to gateway |
+| **Contract Validation** | None | Real API responses |
 | **Speed** | Fast (< 1s per test) | Slower (~2-5s per test) |
 | **Focus** | Component logic, UI interactions | End-to-end flows, API integration |
-| **Dependencies** | Mocked | Real axios, real network calls |
+| **Dependencies** | Mocked | Real axios, real network calls, real backend |
 
-## Prism Mock Server Setup
+## Gateway Configuration
 
-Prism runs two mock servers:
+Integration tests call the **actual gateway URL** directly:
 
-- **Read Service**: `http://localhost:4010` (mocks `api/read-service-api.yaml`)
-- **Write Service**: `http://localhost:4011` (mocks `api/write-service-api.yaml`)
+- **Gateway URL**: Configured via `GATEWAY_URL` environment variable or defaults to `http://localhost:8080`
+- **API Service URLs**: 
+  - Read Service: `${GATEWAY_URL}/xq-fitness-read-service/api/v1`
+  - Write Service: `${GATEWAY_URL}/xq-fitness-write-service/api/v1`
 
-The mock servers are automatically started before all tests and stopped after all tests complete.
+### Setting Gateway URL
 
-### Manual Server Control
-
-To start the mock servers manually:
+Set the `GATEWAY_URL` environment variable before running tests:
 
 ```bash
-npm run mock:api
+# Use default localhost:8080
+npm run test:integration
+
+# Use custom gateway URL
+GATEWAY_URL=http://localhost:8080 npm run test:integration
+
+# Use remote gateway
+GATEWAY_URL=https://api.example.com npm run test:integration
 ```
 
-This starts both servers and keeps them running until you stop them (Ctrl+C).
+### Prerequisites
+
+Before running integration tests:
+1. **Gateway must be running** - The gateway service must be accessible at the configured URL
+2. **Backend services must be running** - Read and write services must be running and accessible via the gateway
+3. **Database must be available** - Backend services need database access
+4. **Test data may be required** - Some tests may require specific test data in the database
 
 ## Running Tests
 
@@ -87,15 +100,10 @@ Integration tests are located in `__tests__/integration/`:
 Located in `__tests__/integration/helpers/`:
 
 - `test-utils.js` - Integration test utilities:
-  - `renderScreenWithApi()` - Renders screen with real API calls
+  - `renderScreenWithApi()` - Renders screen with real API calls to gateway
   - `waitForApiCall()` - Waits for API call to complete
   - `waitForLoadingToFinish()` - Waits for loading state to disappear
   - `resetApiServer()` - Resets server state (placeholder for future use)
-
-- `api-server.js` - Prism server management:
-  - `startPrismServers()` - Starts both mock servers
-  - `stopPrismServers()` - Stops both mock servers
-  - `configureMockServerUrls()` - Configures app to use mock URLs
 
 ### Test Fixtures
 
@@ -110,24 +118,23 @@ Located in `__tests__/integration/fixtures/`:
 ### 1. Test Setup
 
 Before all tests run:
-1. Prism servers are started on ports 4010 (read) and 4011 (write)
-2. Expo config is overridden to use mock server URLs
-3. Tests wait for servers to be ready
+1. Expo config is configured to use gateway URL from environment or default
+2. No mock servers are started - tests use real gateway
 
 ### 2. Test Execution
 
 During each test:
 1. Screen is rendered with real API service (not mocked)
-2. API calls go to Prism mock servers
-3. Prism validates requests against OpenAPI contracts
-4. Prism returns responses matching OpenAPI schemas
+2. API calls go to the actual gateway URL
+3. Gateway routes requests to backend services
+4. Backend services return real responses
 5. Tests verify UI updates based on API responses
 
 ### 3. Test Teardown
 
 After all tests:
-1. Prism servers are stopped
-2. Test environment is cleaned up
+1. Test environment is cleaned up
+2. No servers to stop (using real gateway)
 
 ## Writing New Integration Tests
 
@@ -158,45 +165,39 @@ describe('MyScreen Integration Tests', () => {
 
 ### Key Points
 
-1. **Use `renderScreenWithApi()`** instead of regular `render()` - this ensures API calls go to Prism
+1. **Use `renderScreenWithApi()`** instead of regular `render()` - this ensures API calls go to the gateway
 2. **Wait for API calls** - Use `waitForApiCall()` or `waitForLoadingToFinish()` to wait for async operations
-3. **No manual mocking** - Don't use `jest.mock()` for API calls, let them go to Prism
-4. **Test contracts** - Prism automatically validates requests/responses against OpenAPI specs
+3. **No manual mocking** - Don't use `jest.mock()` for API calls, let them go to the gateway
+4. **Real API responses** - Tests receive actual responses from backend services
 
-### Testing API Contracts
+### Testing Real API Integration
 
-Prism automatically validates:
-- Request method (GET, POST, PUT, DELETE)
-- Request path parameters
-- Request query parameters
-- Request body schema (structure, required fields, data types)
-- Response status codes
-- Response body schema
+Integration tests verify:
+- Real API endpoints are accessible
+- Request/response formats match expectations
+- Error handling works correctly
+- UI updates based on real API responses
+- End-to-end user flows work correctly
 
-**What Happens with Incorrect Payloads:**
+**What Happens with API Errors:**
 
-Prism runs with the `--errors` flag enabled, which means:
+1. **Invalid Request Body**: Backend services validate requests:
+   - Returns HTTP **422 Unprocessable Entity** or **400 Bad Request**
+   - Response includes validation error messages
+   - Tests verify error handling in the UI
 
-1. **Invalid Request Body**: If the request body doesn't match the OpenAPI schema:
-   - Prism returns HTTP **422 Unprocessable Entity** or **400 Bad Request**
-   - Response includes detailed validation error messages
-   - Example: Missing required field `numberOfSets` → 422 error with details
+2. **Invalid Parameters**: Backend services validate parameters:
+   - Returns HTTP **400 Bad Request** or **404 Not Found**
+   - Tests verify error messages are displayed correctly
 
-2. **Invalid Query Parameters**: If query parameters are missing or invalid:
-   - Prism returns HTTP **400 Bad Request**
-   - Example: Missing `workoutDayId` when required → 400 error
-
-3. **Invalid Path Parameters**: If path parameters don't match the spec:
-   - Prism returns HTTP **404 Not Found** or **400 Bad Request**
-   - Example: Invalid `setId` format → 400 error
-
-4. **Wrong HTTP Method**: If using wrong method (e.g., POST instead of PUT):
-   - Prism returns HTTP **405 Method Not Allowed**
+3. **Server Errors**: Backend services may return errors:
+   - Returns HTTP **500 Internal Server Error**
+   - Tests verify error handling and user feedback
 
 **In Your Tests:**
-- If Prism validation fails, your app receives an error response
-- Tests should verify that error handling works correctly
-- Successful tests confirm the request matched the OpenAPI contract
+- Tests verify that error handling works correctly with real API errors
+- Successful tests confirm the app works with real backend services
+- Tests may require specific test data in the database
 
 ## Important Notes
 
@@ -206,36 +207,27 @@ The API service constructs URLs with service prefixes:
 - Read: `${GATEWAY_URL}/xq-fitness-read-service/api/v1`
 - Write: `${GATEWAY_URL}/xq-fitness-write-service/api/v1`
 
-However, the OpenAPI specs define server URLs as:
-- Read: `http://localhost:8080/api/v1`
-- Write: `http://localhost:3000/api/v1`
-
-For integration tests to work correctly, you may need to:
-1. Update the OpenAPI spec `servers` URLs to match the service paths, OR
-2. Configure Prism to serve at the correct paths using `--base-path` option, OR
-3. Create a test-specific API service configuration
-
-Currently, Prism serves the OpenAPI spec as-is, so paths must match between the spec and the API service calls.
+Integration tests use the actual gateway URL (from `GATEWAY_URL` environment variable or default `http://localhost:8080`). The gateway routes requests to the appropriate backend services.
 
 ## Troubleshooting
 
-### Prism Servers Won't Start
+### Gateway Not Accessible
 
-1. Check if ports 4010 and 4011 are already in use:
+1. Verify the gateway is running:
    ```bash
-   lsof -i :4010
-   lsof -i :4011
+   # Check if gateway is accessible
+   curl http://localhost:8080/health
+   # or
+   curl ${GATEWAY_URL}/health
    ```
 
-2. Kill any processes using those ports:
+2. Check gateway URL configuration:
    ```bash
-   kill -9 <PID>
+   # Verify GATEWAY_URL is set correctly
+   echo $GATEWAY_URL
    ```
 
-3. Ensure Prism is installed:
-   ```bash
-   npm install
-   ```
+3. Ensure backend services are running and accessible via gateway
 
 ### Tests Timeout
 
@@ -244,42 +236,52 @@ Currently, Prism serves the OpenAPI spec as-is, so paths must match between the 
    testTimeout: 30000, // Increase if needed
    ```
 
-2. Check if Prism servers are running:
+2. Check if gateway and backend services are running:
    ```bash
-   curl http://localhost:4010/health
+   # Check gateway
+   curl http://localhost:8080/xq-fitness-read-service/api/v1/muscle-groups
+   
+   # Check write service via gateway
+   curl http://localhost:8080/xq-fitness-write-service/api/v1/routines
    ```
 
 ### API Calls Fail
 
-1. Verify Expo config is being overridden correctly
-2. Check that API service is using the correct base URLs
-3. Ensure OpenAPI specs match the actual API structure
+1. Verify gateway URL is configured correctly (check `GATEWAY_URL` environment variable)
+2. Check that gateway is running and accessible
+3. Verify backend services are running and accessible via gateway
+4. Check network connectivity and firewall settings
+5. Review gateway logs for routing errors
 
-### Contract Validation Errors
+### Backend Service Errors
 
-If Prism rejects requests:
-1. Check the OpenAPI spec in `/api/` directory
-2. Verify request body matches the schema
-3. Check request headers and parameters
+If backend services return errors:
+1. Check backend service logs
+2. Verify database connectivity
+3. Check that required test data exists in the database
+4. Verify API contracts match between mobile app and backend services
 
 ## Benefits
 
-1. **Contract Validation**: Ensures app code matches API contracts
-2. **Real Integration**: Tests actual axios calls, not mocks
-3. **Fast Feedback**: Faster than E2E tests, slower than unit tests
-4. **API Changes Detection**: Fails if API contract changes
-5. **Complete Flows**: Tests full screen behavior from API call to UI update
+1. **Real Integration**: Tests actual API calls to real backend services
+2. **End-to-End Validation**: Tests complete flows from UI to backend and back
+3. **API Contract Verification**: Ensures app works with actual API contracts
+4. **Real Error Handling**: Tests real error scenarios from backend services
+5. **Complete Flows**: Tests full screen behavior with real API integration
 
 ## Limitations
 
-1. **No State Persistence**: Prism doesn't maintain state between requests by default
-2. **Example Data**: Prism returns example data from OpenAPI specs, not custom test data
-3. **Network Simulation**: Doesn't simulate network delays or failures (can be configured)
+1. **Requires Running Services**: Gateway and backend services must be running
+2. **Test Data Dependency**: Tests may require specific test data in the database
+3. **Slower Execution**: Real network calls are slower than mocks
+4. **Environment Dependent**: Tests depend on gateway and backend service availability
+5. **Network Dependency**: Requires network connectivity to gateway
 
 ## Future Enhancements
 
-- Add Prism dynamic response configuration for custom test data
-- Add state management for Prism to simulate database-like behavior
-- Add network delay simulation for testing loading states
-- Add error scenario testing with Prism error responses
+- Add test data setup/teardown helpers
+- Add database seeding for integration tests
+- Add network failure simulation
+- Add retry logic for flaky network calls
+- Add test isolation mechanisms
 

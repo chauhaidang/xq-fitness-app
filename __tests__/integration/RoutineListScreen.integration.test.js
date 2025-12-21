@@ -37,7 +37,7 @@ describe('RoutineListScreen Integration Tests', () => {
     // Wait for loading to finish
     await waitForLoadingToFinish(queryByTestId, 'loading-indicator');
     
-    // Prism will return example data from OpenAPI spec
+    // Backend will return actual routine data
     // We wait for any routine to appear (contract validation ensures correct structure)
     await waitForApiCall(() => {
       const list = queryByTestId('routine-list');
@@ -46,8 +46,8 @@ describe('RoutineListScreen Integration Tests', () => {
   });
 
   it('displays empty state when API returns empty array', async () => {
-    // Note: Prism will return example data by default
-    // To test empty state, we'd need to configure Prism to return empty array
+    // Note: Backend will return actual data
+    // To test empty state, backend would need to return empty array
     // For now, we test that the empty state component exists
     const { queryByTestId } = renderScreenWithApi(RoutineListScreen);
     
@@ -80,7 +80,7 @@ describe('RoutineListScreen Integration Tests', () => {
       return list && list.props.data && list.props.data.length > 0;
     }, { timeout: 5000 });
     
-    // Try to find a routine item (if Prism returns data)
+      // Try to find a routine item (if backend returns data)
     try {
       const routineItem = getByTestId('routine-item-touchable-1');
       fireEvent.press(routineItem);
@@ -89,7 +89,7 @@ describe('RoutineListScreen Integration Tests', () => {
       });
     } catch (e) {
       // If no routines returned, skip this test
-      console.log('No routines returned from Prism, skipping navigation test');
+        console.log('No routines returned from backend, skipping navigation test');
     }
   });
 
@@ -111,7 +111,7 @@ describe('RoutineListScreen Integration Tests', () => {
   });
 
   it('handles API errors gracefully', async () => {
-    // Note: To test error handling, we'd need to configure Prism to return errors
+    // Note: To test error handling, backend would need to return errors
     // For now, we ensure the screen handles errors without crashing
     const { queryByTestId } = renderScreenWithApi(RoutineListScreen);
     

@@ -9,6 +9,69 @@ const GATEWAY_URL = Constants.expoConfig?.extra?.gatewayUrl || 'http://localhost
 const READ_SERVICE_URL = `${GATEWAY_URL}/xq-fitness-read-service/api/v1`;
 const WRITE_SERVICE_URL = `${GATEWAY_URL}/xq-fitness-write-service/api/v1`;
 
+// Helper function to log API requests and responses
+const setupApiLogging = (apiInstance, serviceName) => {
+  // Request interceptor
+  apiInstance.interceptors.request.use(
+    (config) => {
+      const logData = {
+        service: serviceName,
+        method: config.method?.toUpperCase(),
+        url: `${config.baseURL}${config.url}`,
+        headers: config.headers,
+      };
+
+      // Log request body for POST, PUT, PATCH requests
+      if (config.data && ['post', 'put', 'patch'].includes(config.method?.toLowerCase())) {
+        logData.requestBody = config.data;
+      }
+
+      // Log query parameters for GET requests
+      if (config.params) {
+        logData.queryParams = config.params;
+      }
+
+      console.log(`[API Request - ${serviceName}]`, JSON.stringify(logData, null, 2));
+      return config;
+    },
+    (error) => {
+      console.error(`[API Request Error - ${serviceName}]`, error);
+      return Promise.reject(error);
+    }
+  );
+
+  // Response interceptor
+  apiInstance.interceptors.response.use(
+    (response) => {
+      const logData = {
+        service: serviceName,
+        method: response.config.method?.toUpperCase(),
+        url: `${response.config.baseURL}${response.config.url}`,
+        status: response.status,
+        statusText: response.statusText,
+        responseBody: response.data,
+      };
+
+      console.log(`[API Response - ${serviceName}]`, JSON.stringify(logData, null, 2));
+      return response;
+    },
+    (error) => {
+      const logData = {
+        service: serviceName,
+        method: error.config?.method?.toUpperCase(),
+        url: error.config ? `${error.config.baseURL}${error.config.url}` : 'Unknown',
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        errorMessage: error.message,
+        responseBody: error.response?.data,
+      };
+
+      console.error(`[API Error - ${serviceName}]`, JSON.stringify(logData, null, 2));
+      return Promise.reject(error);
+    }
+  );
+};
+
 // Create axios instances for each service
 const readApi = axios.create({
   baseURL: READ_SERVICE_URL,
@@ -25,6 +88,10 @@ const writeApi = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Setup logging for both API instances
+setupApiLogging(readApi, 'ReadService');
+setupApiLogging(writeApi, 'WriteService');
 
 // Read Service API calls
 export const getMuscleGroups = async () => {
@@ -98,4 +165,28 @@ export const updateWorkoutDaySet = async (setId, data, workoutDayId = null, musc
 
 export const deleteWorkoutDaySet = async (setId) => {
   await writeApi.delete(`/workout-day-sets/${setId}`);
+};
+
+// Snapshot API calls
+/**
+ * Creates a weekly snapshot for a routine
+ * @param {number} routineId - ID of the routine to snapshot
+ * @returns {Promise<{id: number, routineId: number, weekStartDate: string, createdAt: string}>} WeeklySnapshotResponse
+ * @throws {Error} Throws error if routine not found (404), invalid request (400), or server error (500)
+ */
+export const createWeeklySnapshot = async (routineId) => {
+  const response = await writeApi.post(`/routines/${routineId}/snapshots`);
+  return response.data;
+};
+
+// Report API calls
+/**
+ * Gets weekly report for a routine showing total sets per muscle group
+ * @param {number} routineId - ID of the routine to get report for
+ * @returns {Promise<{routineId: number, weekStartDate: string, hasSnapshot: boolean, snapshotCreatedAt: string|null, muscleGroupTotals: Array<{muscleGroup: object, totalSets: number}>}>} WeeklyReportResponse
+ * @throws {Error} Throws error if routine not found (404) or server error (500)
+ */
+export const getWeeklyReport = async (routineId) => {
+  const response = await readApi.get(`/routines/${routineId}/weekly-report`);
+  return response.data;
 };

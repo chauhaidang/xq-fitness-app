@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: XQ Fitness Write Service API
   description: Write service for creating, updating, and deleting workout routines and related data
-  version: 1.1.0
+  version: 1.2.0
   contact:
     name: XQ Fitness Team
 
@@ -240,7 +240,12 @@ paths:
   /workout-day-sets:
     post:
       summary: Add sets configuration to a workout day
-      description: Creates a new sets configuration for a muscle group on a workout day
+      description: |
+        Creates a new sets configuration for a muscle group on a workout day.
+        
+        **Upsert behavior:** If a sets configuration already exists for the given workout day and muscle group,
+        it will be updated instead of creating a new one. This prevents duplicate entries and allows
+        easy updates without needing to know the setId.
       operationId: createWorkoutDaySet
       tags:
         - Workout Day Sets
@@ -253,6 +258,12 @@ paths:
       responses:
         '201':
           description: Sets configuration created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkoutDaySetResponse'
+        '200':
+          description: Sets configuration updated successfully (when it already existed)
           content:
             application/json:
               schema:
@@ -363,6 +374,50 @@ paths:
           description: Sets configuration deleted successfully
         '404':
           description: Sets configuration not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /routines/{routineId}/snapshots:
+    post:
+      summary: Create a weekly snapshot for a routine
+      description: |
+        Creates a snapshot of the current routine data (workout days and sets) for the current week,
+        then resets all sets (numberOfSets) to zero. The snapshot preserves the complete state at
+        the time of creation. If a snapshot already exists for the current week, it will be replaced.
+      operationId: createWeeklySnapshot
+      tags:
+        - Snapshots
+      parameters:
+        - name: routineId
+          in: path
+          description: ID of the routine to snapshot
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: Snapshot created successfully and sets reset
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeeklySnapshotResponse'
+        '400':
+          description: Invalid request (routine not found, invalid week calculation)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Routine not found
           content:
             application/json:
               schema:
@@ -577,6 +632,35 @@ components:
         updatedAt:
           type: string
           format: date-time
+
+    WeeklySnapshotResponse:
+      type: object
+      required:
+        - id
+        - routineId
+        - weekStartDate
+        - createdAt
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the snapshot
+          example: 1
+        routineId:
+          type: integer
+          format: int64
+          description: ID of the routine that was snapshotted
+          example: 1
+        weekStartDate:
+          type: string
+          format: date
+          description: Monday date of the week (ISO 8601 format YYYY-MM-DD)
+          example: "2024-12-02"
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the snapshot was created
+          example: "2024-12-07T10:30:00Z"
 
     Error:
       type: object

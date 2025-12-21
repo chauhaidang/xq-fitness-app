@@ -116,7 +116,48 @@ describe('ManageWorkoutDayScreen', () => {
     });
     
     await waitFor(() => {
-      expect(api.createWorkoutDay).toHaveBeenCalled();
+      expect(api.createWorkoutDay).toHaveBeenCalledWith({
+        routineId: 1,
+        dayNumber: 1,
+        dayName: 'Push Day',
+        notes: null,
+      });
+      expect(mockNavigation.goBack).toHaveBeenCalled();
+    });
+  });
+
+  it('converts routineId from string to integer when creating workout day', async () => {
+    const newDay = { id: 3, routineId: 1, dayNumber: 1, dayName: 'Push Day' };
+    api.createWorkoutDay.mockResolvedValue(newDay);
+    api.createWorkoutDaySet.mockResolvedValue({ id: 1 });
+    
+    // Simulate route params where routineId comes as a string (common in React Navigation)
+    const routeWithStringRoutineId = mockRoute({ routineId: '1', isEdit: false });
+    
+    const { getByTestId } = render(
+      <ManageWorkoutDayScreen navigation={mockNavigation} route={routeWithStringRoutineId} />
+    );
+    
+    await waitFor(async () => {
+      const dayNumberInput = getByTestId('day-number-input');
+      const dayNameInput = getByTestId('day-name-input');
+      const setsInput = getByTestId('sets-input-1');
+      const submitButton = getByTestId('submit-button');
+      
+      fireEvent.changeText(dayNumberInput, '1');
+      fireEvent.changeText(dayNameInput, 'Push Day');
+      fireEvent.changeText(setsInput, '4');
+      fireEvent.press(submitButton);
+    });
+    
+    await waitFor(() => {
+      // Verify routineId is converted to integer (not string)
+      expect(api.createWorkoutDay).toHaveBeenCalledWith({
+        routineId: 1, // Should be integer, not string '1'
+        dayNumber: 1,
+        dayName: 'Push Day',
+        notes: null,
+      });
       expect(mockNavigation.goBack).toHaveBeenCalled();
     });
   });

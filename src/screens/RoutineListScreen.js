@@ -91,6 +91,22 @@ const RoutineListScreen = ({ navigation }) => {
       </TouchableOpacity>
       <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center', marginTop: spacing.sm, justifyContent: 'flex-end' }}>
         <TouchableOpacity
+          testID={`report-routine-${item.id}`}
+          accessibilityLabel={`View weekly report for routine ${item.name}`}
+          accessibilityRole="button"
+          onPress={() => navigation.navigate('WeeklyReport', { routineId: item.id })}
+          style={{ 
+            minWidth: 44,
+            minHeight: 44,
+            paddingHorizontal: spacing.md,
+            paddingVertical: spacing.sm,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{ color: colors.secondary, fontWeight: '600' }}>Report</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           testID={`edit-routine-${item.id}`}
           accessibilityLabel={`Edit routine ${item.name}`}
           accessibilityRole="button"

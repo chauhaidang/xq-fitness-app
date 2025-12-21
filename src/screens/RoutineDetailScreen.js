@@ -8,13 +8,16 @@ import {
   Alert,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { getRoutineById, deleteWorkoutDay } from '../services/api';
+import { getRoutineById, deleteWorkoutDay, createWeeklySnapshot } from '../services/api';
 import { commonStyles, colors, spacing } from '../styles/common';
+import Toast from '../components/Toast';
 
 const RoutineDetailScreen = ({ route, navigation }) => {
   const { routineId } = route.params;
   const [routine, setRoutine] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [creatingSnapshot, setCreatingSnapshot] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
 
   const fetchRoutineDetail = async () => {
     try {
@@ -59,6 +62,20 @@ const RoutineDetailScreen = ({ route, navigation }) => {
     );
   };
 
+  const handleCreateSnapshot = async () => {
+    try {
+      setCreatingSnapshot(true);
+      await createWeeklySnapshot(routineId);
+      setToast({ visible: true, message: 'Weekly snapshot created successfully', type: 'success' });
+    } catch (error) {
+      console.error('Error creating snapshot:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to create snapshot';
+      Alert.alert('Error', errorMessage, [{ text: 'OK' }]);
+    } finally {
+      setCreatingSnapshot(false);
+    }
+  };
+
   if (loading) {
     return (
       <View style={commonStyles.centeredContainer} testID="loading-container">
@@ -77,6 +94,12 @@ const RoutineDetailScreen = ({ route, navigation }) => {
 
   return (
     <View style={commonStyles.container} testID="routine-detail-screen">
+      <Toast
+        message={toast.message}
+        visible={toast.visible}
+        type={toast.type}
+        onHide={() => setToast({ visible: false, message: '', type: 'success' })}
+      />
       <ScrollView contentContainerStyle={{ paddingVertical: spacing.md }}>
         {/* Routine Info */}
         <View style={[commonStyles.card, { marginBottom: spacing.lg }]} testID="routine-info">
@@ -89,6 +112,23 @@ const RoutineDetailScreen = ({ route, navigation }) => {
           <Text style={commonStyles.textSecondary}>
             Status: {routine.isActive ? 'Active' : 'Inactive'}
           </Text>
+          <TouchableOpacity
+            testID="create-snapshot-button"
+            onPress={handleCreateSnapshot}
+            disabled={creatingSnapshot}
+            style={[
+              commonStyles.button,
+              { marginTop: spacing.md },
+              creatingSnapshot && { opacity: 0.6 },
+            ]}
+            accessibilityState={{ disabled: creatingSnapshot }}
+          >
+            {creatingSnapshot ? (
+              <ActivityIndicator size="small" color={colors.white} />
+            ) : (
+              <Text style={commonStyles.buttonText}>Create Snapshot</Text>
+            )}
+          </TouchableOpacity>
         </View>
 
         {/* Workout Days Section */}

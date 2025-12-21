@@ -92,7 +92,7 @@ describe('EditRoutineScreen Integration Tests', () => {
     fireEvent.press(submitButton);
     
     // Wait for API call to complete
-    // Prism will validate the PUT request against OpenAPI contract
+    // Backend will validate the PUT request against API contract
     await waitFor(
       () => {
         expect(Alert.alert).toHaveBeenCalled();
@@ -100,7 +100,7 @@ describe('EditRoutineScreen Integration Tests', () => {
       { timeout: 15000 }
     );
     
-    // Request should be validated by Prism
+    // Request should be validated by backend
     expect(Alert.alert.mock.calls.length).toBeGreaterThan(0);
   });
 
@@ -122,7 +122,7 @@ describe('EditRoutineScreen Integration Tests', () => {
     
     fireEvent.press(submitButton);
     
-    // Prism will validate the PUT request body against OpenAPI schema
+    // Backend will validate the PUT request body against API schema
     await waitFor(
       () => {
         expect(Alert.alert).toHaveBeenCalled();
