@@ -15,6 +15,7 @@
     "test:integration:watch": "GATEWAY_URL=http://localhost:8080 jest --config=jest.integration.config.js --watch",
     "test:all": "npm run test:unit && npm run test:integration",
     "mock:api": "prism mock api/read-service-api.yaml api/write-service-api.yaml --errors",
+    "download:api": "rm -rf xq-apis/ && ./scripts/download-api-files.sh",
     "bip": "expo prebuild --no-install --platform ios && cp build-sim.sh ios/build-sim.sh && chmod +x ios/build-sim.sh && cp build-device.sh ios/build-device.sh && chmod +x ios/build-device.sh",
     "bi": "cd ios && pod update && pod install && sh ./build-sim.sh && cd ..",
     "deploy-sim": "./deploy-sim.sh",
