@@ -238,3 +238,73 @@ export const getWeeklyReport = async (routineId) => {
   const response = await readApi.get(`/routines/${routineId}/weekly-report`);
   return response.data;
 };
+
+// Exercise API calls (Write Service: create, get by id, update, delete; Read Service: list)
+/**
+ * Creates an exercise for a workout day and muscle group
+ * @param {Object} data - { workoutDayId, muscleGroupId, exerciseName, totalReps?, weight?, totalSets?, notes? }
+ * @returns {Promise<Object>} Created exercise (id, workoutDayId, muscleGroupId, exerciseName, totalReps, weight, totalSets, notes, createdAt, updatedAt)
+ */
+export const createExercise = async (data) => {
+  const payload = {
+    workoutDayId: parseInt(data.workoutDayId, 10),
+    muscleGroupId: parseInt(data.muscleGroupId, 10),
+    exerciseName: data.exerciseName?.trim() || '',
+    totalReps: data.totalReps != null ? parseInt(data.totalReps, 10) : 0,
+    weight: data.weight != null ? parseFloat(data.weight) : 0,
+    totalSets: data.totalSets != null ? parseInt(data.totalSets, 10) : 0,
+    notes: data.notes?.trim() || null,
+  };
+  const response = await writeApi.post('/exercises', payload);
+  return response.data;
+};
+
+/**
+ * Gets a single exercise by ID (Write Service)
+ * @param {number} exerciseId - Exercise ID
+ * @returns {Promise<Object>} Exercise
+ */
+export const getExerciseById = async (exerciseId) => {
+  const response = await writeApi.get(`/exercises/${exerciseId}`);
+  return response.data;
+};
+
+/**
+ * Lists exercises for a workout day, optionally filtered by muscle group (Read Service)
+ * @param {number} workoutDayId - Workout day ID
+ * @param {number|null} muscleGroupId - Optional muscle group ID filter
+ * @returns {Promise<Array>} List of exercises
+ */
+export const getExercises = async (workoutDayId, muscleGroupId = null) => {
+  const params = { workoutDayId: parseInt(workoutDayId, 10) };
+  if (muscleGroupId != null) {
+    params.muscleGroupId = parseInt(muscleGroupId, 10);
+  }
+  const response = await readApi.get('/exercises', { params });
+  return response.data;
+};
+
+/**
+ * Updates an exercise
+ * @param {number} exerciseId - Exercise ID
+ * @param {Object} data - { exerciseName?, totalReps?, weight?, totalSets?, notes? }
+ * @returns {Promise<Object>} Updated exercise
+ */
+export const updateExercise = async (exerciseId, data) => {
+  const payload = {};
+  if (data.exerciseName !== undefined) payload.exerciseName = data.exerciseName?.trim() || '';
+  if (data.totalReps !== undefined) payload.totalReps = parseInt(data.totalReps, 10);
+  if (data.weight !== undefined) payload.weight = parseFloat(data.weight);
+  if (data.totalSets !== undefined) payload.totalSets = parseInt(data.totalSets, 10);
+  if (data.notes !== undefined) payload.notes = data.notes?.trim() || null;
+  const response = await writeApi.put(`/exercises/${exerciseId}`, payload);
+  return response.data;
+};
+
+/**
+ * Deletes an exercise
+ * @param {number} exerciseId - Exercise ID
+ */
+export const deleteExercise = async (exerciseId) => {
+  await writeApi.delete(`/exercises/${exerciseId}`);
+};

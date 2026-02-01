@@ -264,6 +264,23 @@ const ManageWorkoutDayScreen = ({ route, navigation }) => {
           </View>
         ))}
 
+        {isEdit && workoutDay?.id && (
+          <TouchableOpacity
+            testID="manage-exercises-button"
+            onPress={() =>
+              navigation.navigate('ManageExercise', {
+                routineId: parseInt(routineId, 10),
+                workoutDay: { ...workoutDay, sets: workoutDay?.sets || [] },
+              })
+            }
+            style={[commonStyles.button, commonStyles.buttonSecondary, { marginTop: spacing.lg }]}
+          >
+            <Text style={[commonStyles.buttonText, commonStyles.buttonSecondaryText]}>
+              Manage Exercises
+            </Text>
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity
           testID="submit-button"
           style={[commonStyles.button, { marginTop: spacing.xl }, loading && { opacity: 0.6 }]}

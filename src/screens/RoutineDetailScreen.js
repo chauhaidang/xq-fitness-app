@@ -12,6 +12,48 @@ import { getRoutineById, deleteWorkoutDay, createWeeklySnapshot } from '../servi
 import { commonStyles, colors, spacing } from '../styles/common';
 import Toast from '../components/Toast';
 
+/**
+ * Compute muscle group total sets for display: from exercises (sum of totalSets per muscle group)
+ * when available, otherwise fall back to legacy workout_day_sets (numberOfSets).
+ * API returns day.sets (legacy) and day.exercises (each has totalSets, muscleGroupId, muscleGroup).
+ */
+const getMuscleGroupTotalsForDay = (day) => {
+  const byMg = {}; // muscleGroupId -> { name, totalSetsFromExercises, legacySets }
+  if (day.sets && day.sets.length > 0) {
+    day.sets.forEach((s) => {
+      const id = s.muscleGroup?.id ?? s.muscleGroupId;
+      if (id != null) {
+        byMg[id] = {
+          name: s.muscleGroup?.name ?? `Muscle group ${id}`,
+          totalSetsFromExercises: 0,
+          legacySets: s.numberOfSets ?? 0,
+        };
+      }
+    });
+  }
+  if (day.exercises && day.exercises.length > 0) {
+    day.exercises.forEach((ex) => {
+      const id = ex.muscleGroupId ?? ex.muscleGroup?.id;
+      if (id != null) {
+        if (!byMg[id]) {
+          byMg[id] = {
+            name: ex.muscleGroup?.name ?? `Muscle group ${id}`,
+            totalSetsFromExercises: 0,
+            legacySets: 0,
+          };
+        }
+        byMg[id].totalSetsFromExercises =
+          (byMg[id].totalSetsFromExercises || 0) + (ex.totalSets ?? 0);
+      }
+    });
+  }
+  return Object.entries(byMg).map(([id, v]) => ({
+    muscleGroupId: parseInt(id, 10),
+    name: v.name,
+    totalSets: v.totalSetsFromExercises > 0 ? v.totalSetsFromExercises : v.legacySets,
+  }));
+};
+
 const RoutineDetailScreen = ({ route, navigation }) => {
   const { routineId } = route.params;
   const [routine, setRoutine] = useState(null);
@@ -147,6 +189,11 @@ const RoutineDetailScreen = ({ route, navigation }) => {
               <Text style={{ color: colors.primary, fontWeight: '600', fontSize: 16 }}>+ Add Day</Text>
             </TouchableOpacity>
           </View>
+          {routine.workoutDays && routine.workoutDays.length > 0 && (
+            <Text style={[commonStyles.textSecondary, { marginBottom: spacing.sm, fontSize: 13 }]}>
+              Tap &quot;Exercises&quot; on a day to add or edit exercises (name, reps, weight, sets).
+            </Text>
+          )}
         </View>
 
         {routine.workoutDays && routine.workoutDays.length > 0 ? (
@@ -164,6 +211,18 @@ const RoutineDetailScreen = ({ route, navigation }) => {
                     )}
                   </View>
                   <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+                    <TouchableOpacity
+                      testID={`exercises-day-${day.id}`}
+                      onPress={() =>
+                        navigation.navigate('ManageExercise', {
+                          routineId: routine.id,
+                          workoutDay: day,
+                        })
+                      }
+                      style={{ padding: spacing.xs }}
+                    >
+                      <Text style={{ color: colors.primary, fontWeight: '600' }}>Exercises</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity
                       testID={`edit-day-${day.id}`}
                       onPress={() =>
@@ -187,27 +246,34 @@ const RoutineDetailScreen = ({ route, navigation }) => {
                   </View>
                 </View>
 
-                {/* Muscle Groups and Sets */}
-                {day.sets && day.sets.length > 0 && (
-                  <View style={{ marginTop: spacing.sm, paddingTop: spacing.sm, borderTopWidth: 1, borderTopColor: colors.border }}>
-                    <Text style={[commonStyles.text, { fontWeight: '600', marginBottom: spacing.xs }]}>
-                      Muscle Groups:
-                    </Text>
-                    {day.sets.map((set) => (
-                      <View key={set.id} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.xs }}>
-                        <Text style={commonStyles.text}>{set.muscleGroup.name}</Text>
-                        <Text style={[commonStyles.text, { fontWeight: '600', color: colors.primary }]}>
-                          {set.numberOfSets} sets
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                )}
+                {/* Muscle Groups and total sets (from exercises when present, else legacy sets) */}
+                {(() => {
+                  const muscleGroupTotals = getMuscleGroupTotalsForDay(day);
+                  if (muscleGroupTotals.length === 0) return null;
+                  return (
+                    <View style={{ marginTop: spacing.sm, paddingTop: spacing.sm, borderTopWidth: 1, borderTopColor: colors.border }}>
+                      <Text style={[commonStyles.text, { fontWeight: '600', marginBottom: spacing.xs }]}>
+                        Muscle Groups:
+                      </Text>
+                      {muscleGroupTotals.map((mg) => (
+                        <View key={mg.muscleGroupId} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.xs }}>
+                          <Text style={commonStyles.text}>{mg.name}</Text>
+                          <Text style={[commonStyles.text, { fontWeight: '600', color: colors.primary }]}>
+                            {mg.totalSets} sets
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  );
+                })()}
               </View>
             ))
         ) : (
           <View style={[commonStyles.card, { alignItems: 'center' }]} testID="no-workout-days">
             <Text style={commonStyles.textSecondary}>No workout days yet</Text>
+            <Text style={[commonStyles.textSecondary, { marginTop: spacing.xs, fontSize: 13 }]}>
+              Add a workout day below to manage exercises (name, reps, weight, sets).
+            </Text>
             <TouchableOpacity
               testID="add-first-day-button"
               onPress={() =>

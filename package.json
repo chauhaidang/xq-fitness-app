@@ -21,7 +21,7 @@
     "deploy-sim": "./deploy-sim.sh",
     "build-and-deploy": "npm run bi && npm run deploy-sim",
     "ls-device": "xcrun simctl list devices available",
-    "bid": "GATEWAY_URL='https://xq-fitness-udfuy.ondigitalocean.app' cd ios && pod update && pod install && sh ./build-device.sh"
+    "bid": "unset E2E && GATEWAY_URL='https://xq-fitness-udfuy.ondigitalocean.app' cd ios && pod update && pod install && sh ./build-device.sh"
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
