@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, within } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createExercise, getRoutineById, createWeeklySnapshot } from '../../../src/services/api';
@@ -197,12 +197,12 @@ export const verifyMuscleGroupTotal = (renderResult, config) => {
   if (muscleGroupSection) {
     expect(muscleGroupSection).toBeTruthy();
     if (expectedTotalSets !== undefined) {
-      // Try both regex and exact match
-      try {
-        expect(getByText(new RegExp(`${expectedTotalSets}.*sets`, 'i'))).toBeTruthy();
-      } catch {
-        expect(getByText(`${expectedTotalSets} sets`)).toBeTruthy();
-      }
+      // The number and "sets" are in separate Text components, so we need to search within the section
+      const sectionWithin = within(muscleGroupSection);
+      // Verify the number appears
+      expect(sectionWithin.getByText(expectedTotalSets.toString())).toBeTruthy();
+      // Verify "sets" text appears
+      expect(sectionWithin.getByText('sets')).toBeTruthy();
     }
   }
 };
