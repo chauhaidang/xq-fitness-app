@@ -103,6 +103,39 @@ const WeeklyReportScreen = ({ route, navigation }) => {
           )}
         </View>
 
+        {/* Exercise Totals */}
+        {report.exerciseTotals && report.exerciseTotals.length > 0 && (
+          <View style={{ marginHorizontal: spacing.md, marginBottom: spacing.lg }} testID="exercise-totals-section">
+            <Text style={[commonStyles.subtitle, { marginBottom: spacing.md }]}>
+              Exercise Totals
+            </Text>
+            {report.exerciseTotals.map((exercise, index) => (
+              <View
+                key={`${exercise.exerciseName}-${exercise.muscleGroup?.id || index}`}
+                style={[commonStyles.card, { marginBottom: spacing.sm }]}
+                testID={`exercise-total-${exercise.exerciseName}`}
+              >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={commonStyles.subtitle}>{exercise.exerciseName || 'Unknown Exercise'}</Text>
+                    <Text style={commonStyles.textSecondary}>
+                      {exercise.muscleGroup?.name || 'Unknown Muscle Group'}
+                    </Text>
+                  </View>
+                  <View style={{ alignItems: 'flex-end', marginLeft: spacing.md }}>
+                    <Text style={[commonStyles.text, { color: colors.primary }]}>
+                      {exercise.totalReps} reps
+                    </Text>
+                    <Text style={[commonStyles.text, { color: colors.primary }]}>
+                      {exercise.totalWeight} kg
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
         {/* Muscle Group Totals */}
         {report.muscleGroupTotals && report.muscleGroupTotals.length > 0 ? (
           <View style={{ marginHorizontal: spacing.md }}>
