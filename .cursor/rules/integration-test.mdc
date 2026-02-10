@@ -17,7 +17,7 @@ When running or updating integration tests for the mobile app, follow the projec
 
 ### 1. Spin up the test environment with xq-infra
 
-- Install xq-cli if needed: `npm install -g @chauhaidang/xq-test-infra`
+- Install xq-cli if needed: `npm install -g @chauhaidang/xq-test-infra@1.0.3`
 - From the **mobile/** directory (same directory as `test-env/`):
 
 ```bash
