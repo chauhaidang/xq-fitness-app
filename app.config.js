@@ -9,6 +9,7 @@ module.exports = {
       resizeMode: "contain",
       backgroundColor: "#ffffff"
     },
+    icon: "./assets/icon.png",
     assetBundlePatterns: [
       "**/*"
     ],
