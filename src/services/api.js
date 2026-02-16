@@ -17,7 +17,7 @@ const WRITE_SERVICE_URL = `${GATEWAY_URL}/xq-fitness-write-service/api/v1`;
  */
 const safeStringify = (obj, space = 2) => {
   const visited = new WeakSet();
-  
+
   const replacer = (key, value) => {
     // Handle circular references
     if (typeof value === 'object' && value !== null) {
@@ -46,8 +46,8 @@ const safeStringify = (obj, space = 2) => {
   }
 };
 
-// Check if API logging is enabled via environment variable
-const isApiLoggingEnabled = process.env.ENABLE_API_LOGGING === 'true';
+// Check if API logging is enabled via Expo config (set ENABLE_API_LOGGING=true env var before starting)
+const isApiLoggingEnabled = Constants.expoConfig?.extra?.enableApiLogging === true;
 
 // Helper function to log API requests and responses
 const setupApiLogging = (apiInstance, serviceName) => {
@@ -200,13 +200,13 @@ export const createWorkoutDaySet = async (data) => {
 
 export const updateWorkoutDaySet = async (setId, data, workoutDayId = null, muscleGroupId = null) => {
   let url = `/workout-day-sets/${setId}`;
-  
+
   // If workoutDayId and muscleGroupId are provided, use query parameters
   // The setId in the path will be ignored by the API when query params are present
   if (workoutDayId !== null && muscleGroupId !== null) {
     url = `/workout-day-sets/0?workoutDayId=${workoutDayId}&muscleGroupId=${muscleGroupId}`;
   }
-  
+
   const response = await writeApi.put(url, data);
   return response.data;
 };
