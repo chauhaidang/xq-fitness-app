@@ -31,7 +31,7 @@ From **mobile/** (same directory as `test-env/`):
 ```bash
 xq-infra generate -f ./test-env
 xq-infra up
-npm run test:integration
+yarn test:integration
 # When done:
 xq-infra down
 ```
@@ -66,7 +66,7 @@ If startup fails or you see "address already in use":
 ```yaml
 - run: npm install -g @chauhaidang/xq-test-infra@1.0.3
 - run: xq-infra generate -f ./test-env && xq-infra up
-- run: npm run test:integration
+- run: yarn test:integration
 - if: always()
   run: |
     xq-infra logs

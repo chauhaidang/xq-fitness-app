@@ -3,9 +3,13 @@ import { StyleSheet } from 'react-native';
 export const colors = {
   primary: '#722F37',
   secondary: '#50E3C2',
-  success: '#7ED321',
+  success: '#7ED321', // Or #16A34A to match mockup better, but I'll add the light one separately
+  successLight: '#EDFAF4', 
   danger: '#D0021B',
+  dangerLight: '#FEF2F2',
   warning: '#F5A623',
+  neutral: '#9CA3AF',
+  neutralLight: '#F3F4F6',
   background: '#F8F9FA',
   white: '#FFFFFF',
   black: '#000000',

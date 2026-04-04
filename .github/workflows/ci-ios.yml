@@ -31,10 +31,10 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install
 
       - name: Run unit tests
-        run: npm run test:unit
+        run: yarn test:unit
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
@@ -52,7 +52,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com/'
           scope: '@chauhaidang'
 
@@ -61,14 +61,14 @@ jobs:
           npm install -g @chauhaidang/xq-test-infra@1.0.3
 
       - name: Install dependencies
-        run: npm ci
-      
+        run: yarn install --frozen-lockfile
+
       - name: Start up environment
         run: xq-infra generate -f ./test-env && xq-infra up
 
       - name: Run integration tests
-        run: npm run test:integration
-      
+        run: yarn test:integration
+
       - name: Stop environment
         if: always()
         run: |
@@ -89,7 +89,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'yarn'
           registry-url: 'https://npm.pkg.github.com/'
           scope: '@chauhaidang'
 
@@ -108,14 +108,14 @@ jobs:
           xcrun simctl list devices available | head -20
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install
 
       - name: Build App
         run: |
-          npm run bip
+          yarn bip
           chmod +x patch-ios-simulator-fix.sh
           ./patch-ios-simulator-fix.sh
-          npm run bi
+          yarn bi
 
       - name: Get version from package.json
         id: package-version
@@ -139,16 +139,16 @@ jobs:
           name: Release ${{ steps.package-version.outputs.version }}
           body: |
             ## XQ Fitness iOS Simulator Build
-            
+
             **Version:** ${{ steps.package-version.outputs.version }}
             **Commit:** ${{ github.sha }}
             **Branch:** ${{ github.ref_name }}
-            
+
             ### Installation
             1. Download `XQFitness-${{ steps.package-version.outputs.version }}.zip`
             2. Extract the zip file
             3. Install on iOS Simulator using: `xcrun simctl install booted XQFitness.app`
-            
+
             ### Build Info
             - **Platform:** iOS Simulator
             - **Configuration:** Release

@@ -47,3 +47,19 @@ xq-compose.yml
 node_modules
 coverage
 __tests__/integration/tsr
+build
+.DS_Store
+scripts/scripts/
+
+# E2E
+e2e/node_modules/
+e2e/*.app/
+e2e/XQFitness.app/
+e2e/generated-clients/
+e2e/api/*.yaml
+e2e/artifacts/
+e2e/dom-captures/
+e2e/page-source.xml
+e2e/screenshot.png
+e2e/.tmp/
+e2e/.env

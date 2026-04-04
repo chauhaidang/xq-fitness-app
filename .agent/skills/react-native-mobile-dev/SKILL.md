@@ -62,8 +62,8 @@ Keep API calls in `src/services/api.js`; screens call these functions. Do not mo
 
 | Level | Purpose | Location | Run command |
 |-------|---------|----------|-------------|
-| **Unit** | Fast, isolated; mock API | `__tests__/screens/`, `__tests__/components/` | `npm run test:unit` |
-| **Integration** | Real API; backend must be running | `__tests__/integration/` | `npm run test:integration` |
+| **Unit** | Fast, isolated; mock API | `__tests__/screens/`, `__tests__/components/` | `yarn test:unit` |
+| **Integration** | Real API; backend must be running | `__tests__/integration/` | `yarn test:integration` |
 | **E2E** | Full app on device/simulator | Detox config | `detox test` |
 
 ### Unit tests
@@ -78,7 +78,7 @@ Keep API calls in `src/services/api.js`; screens call these functions. Do not mo
 - **No API mocks**; tests hit real gateway
 - Use `renderScreenWithApi`, `waitForLoadingToFinish`, `waitForApiCall`, `createTestRoutine` from `__tests__/integration/helpers/test-utils.js`
 - File naming: `*Screen.integration.test.js` or `*Flow.integration.test.js`
-- Backend: run `xq-infra generate -f ./test-env` and `xq-infra up` before `npm run test:integration`
+- Backend: run `xq-infra generate -f ./test-env` and `xq-infra up` before `yarn test:integration`
 
 ### E2E (Detox)
 

@@ -107,8 +107,8 @@ describe('SnapshotReportFlow Integration Tests - End-to-End User Journeys', () =
   });
 
   // T029: Integration test: create routine with exercises, create snapshot, view weekly report with exercise totals
-  // Tests aggregation scenario: same exercise appears in multiple workout days and should be aggregated in the report
-  it('T029 [US2]: creates routine with 2 workout days (same muscle group), adds same exercise to both days, creates snapshot, views weekly report with aggregated exercise totals', async () => {
+  // Tests aggregation scenario: same exercise appears in multiple workout days and the highest value should be shown in the report
+  it('T029 [US2]: creates routine with 2 workout days (same muscle group), adds same exercise to both days, creates snapshot, views weekly report showing highest exercise totals', async () => {
     let routineWithExercises;
     
     try {
@@ -172,7 +172,7 @@ describe('SnapshotReportFlow Integration Tests - End-to-End User Journeys', () =
     try {
       // Step 2: Create snapshot (should capture all 4 exercises from both days)
       // Note: The API should aggregate "Bench Press" from both days into a single entry
-      // with accumulative totals: totalReps (30+25=55), totalWeight (aggregated), totalSets (3+3=6)
+      // by taking the highest value: totalReps (Math.max(30, 25) = 30)
       await createWeeklySnapshot(routineWithExercises.id);
 
       // Step 3: Navigate to WeeklyReport screen and verify exercise totals are displayed
@@ -195,12 +195,12 @@ describe('SnapshotReportFlow Integration Tests - End-to-End User Journeys', () =
       // Step 5: Verify exercise totals section is displayed
       await waitForExerciseTotalsSection(renderResult.queryByTestId);
 
-      // Step 6: Verify exercises are displayed (should be 3 unique exercises, not 4, since Bench Press is aggregated)
-      // Expected exercises: Bench Press (aggregated), Dumbbell Flyes, Cable Flyes
+      // Step 6: Verify exercises are displayed (should be 3 unique exercises, not 4, since Bench Press takes the highest occurrence)
+      // Expected exercises: Bench Press (highest), Dumbbell Flyes, Cable Flyes
       verifyExerciseInReport(renderResult, {
         name: 'Bench Press',
-        expectedReps: 55, // Aggregated: 30 + 25
-        shouldBeUnique: true, // Should appear only once (aggregated)
+        expectedReps: 30, // Highest occurrence chosen: 30 vs 25
+        shouldBeUnique: true, // Should appear only once
       });
 
       verifyExerciseInReport(renderResult, {

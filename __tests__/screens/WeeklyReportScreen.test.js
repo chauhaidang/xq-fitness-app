@@ -29,6 +29,16 @@ const mockReportData = {
       totalSets: 8,
     },
   ],
+  exerciseTotals: [
+    {
+      exerciseName: 'Bench Press',
+      muscleGroup: { id: 1, name: 'Chest' },
+      totalReps: 36,
+      totalWeight: 80,
+      progressStatusRep: 'INCREASED',
+      progressStatusWeight: 'MAINTAINED',
+    },
+  ],
 };
 
 const mockEmptyReport = {
@@ -59,16 +69,24 @@ describe('WeeklyReportScreen', () => {
   it('displays report with data after loading', async () => {
     api.getWeeklyReport.mockResolvedValue(mockReportData);
     
-    const { getByTestId, getByText } = render(
+    const { getByTestId, getByText, getAllByText } = render(
       <WeeklyReportScreen navigation={mockNavigation} route={route} />
     );
     
     await waitFor(() => {
       expect(getByTestId('weekly-report-screen')).toBeTruthy();
-      expect(getByText('Chest')).toBeTruthy();
+      expect(getAllByText('Chest')).toBeTruthy();
       expect(getByText('12')).toBeTruthy();
       expect(getByText('Back')).toBeTruthy();
       expect(getByText('8')).toBeTruthy();
+      
+      // Check exercise totals with new dual-tile progression layout
+      expect(getByTestId('exercise-totals-section')).toBeTruthy();
+      expect(getByText('Bench Press')).toBeTruthy();
+      expect(getByText('36')).toBeTruthy(); // Total reps
+      expect(getByText('80')).toBeTruthy(); // Total weight
+      expect(getByText('↑ Increased')).toBeTruthy(); // rep progression
+      expect(getByText('= Same')).toBeTruthy(); // weight progression
     });
   });
 

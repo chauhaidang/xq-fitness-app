@@ -3,7 +3,7 @@
  * Runs after all tests complete
  */
 
-import { logger, generateMarkdownFromJunit } from '@chauhaidang/xq-js-common-kit';
+import { logger, generateMarkdownFromJunit } from '@chauhaidang/xq-common-kit';
 import fs from 'fs';
 import { writeFileSync } from 'node:fs';
 

@@ -30,7 +30,7 @@ When developing a feature:
 - Location: `__tests__/screens/`, `__tests__/components/`
 - Use `renderScreen`, `mockNavigation`, fixtures from `__tests__/utils/test-utils.js`
 - Mock API: `jest.mock('../../src/services/api')`
-- Run: `npm run test:unit`
+- Run: `yarn test:unit`
 
 ### Integration tests
 - Location: `__tests__/integration/` (naming: `*Screen.integration.test.js` or `*Flow.integration.test.js`)
@@ -41,8 +41,18 @@ When developing a feature:
   ```
 - Use `renderScreenWithApi`, `waitForLoadingToFinish`, `waitForApiCall`, `createTestRoutine` from `__tests__/integration/helpers/test-utils.js`
 - Do **not** mock the API
-- Run: `npm run test:integration`
+- Run: `yarn test:integration`
 - Tear down: `xq-infra down`
+
+### E2E tests
+- Ensure your backend uses test environment data (`xq-infra generate -f ./test-env && xq-infra up`).
+- **Build the iOS Simulator app first** using Release configuration (so it's performant) with the E2E flag and pointing to local gateway:
+  ```bash
+  E2E=true GATEWAY_URL=http://localhost:8080 npm run bip
+  E2E=true GATEWAY_URL=http://localhost:8080 npm run bi
+  ```
+- Make sure Appium is running (`appium &`).
+- Run tests: `yarn test:e2e`
 
 ### Port conflicts
 If `xq-infra up` fails with "address already in use", run `xq-infra down` in other project directories (read-service, write-service, mobile) that may be using ports 5432 or 8080.
@@ -54,4 +64,4 @@ If `xq-infra up` fails with "address already in use", run `xq-infra down` in oth
 - [ ] Implementation with `testID` on key elements
 - [ ] Unit tests added and passing
 - [ ] Integration tests added (if API involved); backend running via xq-infra
-- [ ] `npm run test:unit` and `npm run test:integration` pass
+- [ ] `yarn test:unit` and `yarn test:integration` pass

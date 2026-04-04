@@ -29,12 +29,12 @@ xq-infra up
 From `mobile/` directory:
 
 ```bash
-npm run test:integration
+yarn test:integration
 ```
 
 To watch:
 ```bash
-npm run test:integration:watch
+yarn test:integration:watch
 ```
 
 ### 3. Tear Down
