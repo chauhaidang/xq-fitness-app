@@ -2,7 +2,7 @@ import RoutineDetailPage, { createFluentRoutineDetailPage } from './page-objects
 import { createFluentMyRoutinesPage } from './page-objects/my-routines.page.js';
 import { createFluentCreateRoutinePage } from './page-objects/create-routine.page.js';
 import * as kit from '@chauhaidang/xq-common-kit';
-import {Configuration, RoutinesApi, WorkoutDaysApi, WorkoutDaySetsApi} from 'xq-fitness-write-client';
+import {Configuration, RoutinesApi, WorkoutDaysApi, WorkoutDaySetsApi} from '@chauhaidang/write-service-api';
 import { MuscleGroupId } from './enum.js';
 
 describe('Manage Routine', () => {

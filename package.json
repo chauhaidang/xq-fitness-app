@@ -26,8 +26,7 @@
     "deploy-device": "ios-deploy -b ios/build/Export/XQFitness.ipa",
     "copy-app": "rm -rf build && mkdir -p build && cp -r ./ios/build/Products/Release-iphonesimulator/XQFitness.app ./build/XQFitness.app",
     "e2e:analyze-dom": "tsx e2e/scripts/analyze-dom-trees.ts",
-    "e2e:install-app": "xcrun simctl install 9D4D7315-746B-47BF-A531-2B2E0E9EDD7D ./e2e/XQFitness.app",
-    "e2e:generate-client": "./e2e/scripts/generate-api-client.sh"
+    "e2e:install-app": "xcrun simctl install 9D4D7315-746B-47BF-A531-2B2E0E9EDD7D ./e2e/XQFitness.app"
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
@@ -75,8 +74,8 @@
     "jest-junit": "^16.0.0",
     "pg": "^8.20.0",
     "react-test-renderer": "^18.2.0",
-    "xq-fitness-read-client": "file:./e2e/generated-clients/read-service",
-    "xq-fitness-write-client": "file:./e2e/generated-clients/write-service"
+    "@chauhaidang/write-service-api": "1.3.0",
+    "@chauhaidang/read-service-api": "1.3.1"
   },
   "private": true,
   "jest-junit": {

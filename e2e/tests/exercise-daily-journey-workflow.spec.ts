@@ -3,7 +3,7 @@ import { createFluentMyRoutinesPage } from './page-objects/my-routines.page.js';
 import { createFluentManageExercisePage } from './page-objects/manage-exercise.page.js';
 import { createFluentWeeklyReportPage } from './page-objects/weekly-report.page.js';
 import * as kit from '@chauhaidang/xq-common-kit';
-import { Configuration, RoutinesApi, WorkoutDaysApi, WorkoutDaySetsApi, ExercisesApi, SnapshotsApi } from 'xq-fitness-write-client';
+import { Configuration, RoutinesApi, WorkoutDaysApi, WorkoutDaySetsApi, ExercisesApi, SnapshotsApi } from '@chauhaidang/write-service-api';
 import { MuscleGroupId } from './enum.js';
 import { shiftLatestSnapshotToPreviousWeek } from '../support/utils/db-helper.js';
 
