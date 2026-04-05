@@ -68,3 +68,6 @@ artifacts/
 scripts/
 
 *.log
+
+nginx-gateway.conf
+mobile/nginx-gateway.conf
