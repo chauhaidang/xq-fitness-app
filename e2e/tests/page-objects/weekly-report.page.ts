@@ -116,7 +116,13 @@ class WeeklyReportPage extends Page {
      */
     public async verifyMuscleGroupTotal(muscleGroupName: string, expectedSets: number) {
         const muscleGroupElement = WeeklyReportObjects.getMuscleGroupByName(muscleGroupName);
-        await muscleGroupElement.scrollIntoView({ direction: 'down', scrollableElement: WeeklyReportObjects.scrollView });
+        // The list's initial scroll position varies between sessions (can start at top or mid-list),
+        // so try scrolling up first (reveals items below), then down (reveals items above) if not found.
+        try {
+            await muscleGroupElement.scrollIntoView({ direction: 'up', scrollableElement: WeeklyReportObjects.scrollView });
+        } catch {
+            await muscleGroupElement.scrollIntoView({ direction: 'down', scrollableElement: WeeklyReportObjects.scrollView });
+        }
         await expect(muscleGroupElement).toBeDisplayed({ wait: 5000 });
         
         // Extract the aggregated accessibility label and verify it contains the correct sets data

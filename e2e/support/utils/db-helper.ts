@@ -10,28 +10,42 @@ const pool = new Pool({
 });
 
 /**
- * Shifts the most recent weekly snapshot for a routine back by 7 days,
+ * Calculates the ISO Monday of the current week in UTC (same algorithm as SnapshotService).
+ */
+function getCurrentWeekStart(): string {
+    const now = new Date();
+    const dayOfWeek = now.getUTCDay(); // 0 = Sunday
+    const isoDayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
+    const monday = new Date(now);
+    monday.setUTCDate(now.getUTCDate() - (isoDayOfWeek - 1));
+    monday.setUTCHours(0, 0, 0, 0);
+    return monday.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+}
+
+/**
+ * Shifts the current-week snapshot for a routine back by 7 days,
  * simulating it having been created in the previous week.
- * Use this in test setup to enable progress comparison between two weeks.
+ * Throws if no snapshot is found for the current week.
  */
 export async function shiftLatestSnapshotToPreviousWeek(routineId: number): Promise<void> {
-    const result = await pool.query<{ week_start_date: string }>(
-        'SELECT week_start_date FROM weekly_snapshots WHERE routine_id = $1 ORDER BY created_at DESC LIMIT 1',
-        [routineId]
-    );
-    if (result.rows.length === 0) {
-        throw new Error(`No snapshot found for routine ${routineId}`);
-    }
+    const currentWeekStart = getCurrentWeekStart();
 
-    const currentWeekStart = result.rows[0].week_start_date;
     const prevDate = new Date(currentWeekStart);
     prevDate.setUTCDate(prevDate.getUTCDate() - 7);
     const prevWeekStart = prevDate.toISOString().slice(0, 10);
 
-    await pool.query(
+    const result = await pool.query(
         'UPDATE weekly_snapshots SET week_start_date = $1 WHERE routine_id = $2 AND week_start_date = $3',
         [prevWeekStart, routineId, currentWeekStart]
     );
+
+    if ((result.rowCount ?? 0) === 0) {
+        throw new Error(
+            `shiftLatestSnapshotToPreviousWeek: no snapshot found for routine ${routineId} with week_start_date = ${currentWeekStart}`
+        );
+    }
+
+    console.log(`[DB] Shifted snapshot for routine ${routineId}: ${currentWeekStart} → ${prevWeekStart}`);
 }
 
 export async function closeDbPool(): Promise<void> {

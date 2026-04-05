@@ -31,6 +31,13 @@ echo "$TEMP_DIR"
 if [ -d "$TEMP_DIR/$REMOTE_PATH" ]; then
     # Use rsync to copy contents (files and subdirs) from the remote path to the target directory
     rsync -av --exclude='.git' "$TEMP_DIR/$REMOTE_PATH/" "$TARGET_DIR/"
+
+    # Flatten the directory if a nested 'scripts' folder exists (redundant nesting)
+    if [ -d "$TARGET_DIR/scripts" ]; then
+        echo "Flattening nested scripts directory..."
+        rsync -av "$TARGET_DIR/scripts/" "$TARGET_DIR/"
+        rm -rf "$TARGET_DIR/scripts"
+    fi
 else
     echo "Error: Remote path $REMOTE_PATH not found."
     exit 1
