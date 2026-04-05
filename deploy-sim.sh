@@ -42,7 +42,7 @@ APP_BUNDLE=$(find "${BUILD_DIR}" -name "${SCHEME}.app" -type d 2>/dev/null | hea
 
 if [ -z "$APP_BUNDLE" ]; then
     print_error "App bundle not found in ${BUILD_DIR}"
-    print_info "Please build the app first using: npm run bi"
+    print_info "Please build the app first using: yarn bi"
     exit 1
 fi
 

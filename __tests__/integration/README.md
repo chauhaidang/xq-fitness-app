@@ -40,13 +40,13 @@ Set the `GATEWAY_URL` environment variable before running tests:
 
 ```bash
 # Use default localhost:8080
-npm run test:integration
+yarn test:integration
 
 # Use custom gateway URL
-GATEWAY_URL=http://localhost:8080 npm run test:integration
+GATEWAY_URL=http://localhost:8080 yarn test:integration
 
 # Use remote gateway
-GATEWAY_URL=https://api.example.com npm run test:integration
+GATEWAY_URL=https://api.example.com yarn test:integration
 ```
 
 ### Prerequisites
@@ -62,25 +62,25 @@ Before running integration tests:
 ### Run All Integration Tests
 
 ```bash
-npm run test:integration
+yarn test:integration
 ```
 
 ### Run Integration Tests in Watch Mode
 
 ```bash
-npm run test:integration:watch
+yarn test:integration:watch
 ```
 
 ### Run Only Unit Tests (Exclude Integration)
 
 ```bash
-npm run test:unit
+yarn test:unit
 ```
 
 ### Run All Tests (Unit + Integration)
 
 ```bash
-npm run test:all
+yarn test:all
 ```
 
 ## Test Structure

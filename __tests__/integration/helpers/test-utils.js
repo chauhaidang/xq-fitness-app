@@ -92,7 +92,13 @@ export const renderScreenWithApi = (ScreenComponent, options = {}) => {
  */
 export const waitForApiCall = async (condition, options = {}) => {
   const { timeout = 10000, interval = 100 } = options;
-  return waitFor(condition, { timeout, interval });
+  return waitFor(async () => {
+    const result = await condition();
+    if (result === false) {
+      throw new Error('waitForApiCall condition returned false');
+    }
+    return result;
+  }, { timeout, interval });
 };
 
 /**

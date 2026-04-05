@@ -10,6 +10,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { getWeeklyReport } from '../services/api';
 import { commonStyles, colors, spacing } from '../styles/common';
+import ProgressBadge from '../components/ProgressBadge';
 
 const WeeklyReportScreen = ({ route, navigation }) => {
   const { routineId } = route.params;
@@ -89,7 +90,7 @@ const WeeklyReportScreen = ({ route, navigation }) => {
 
   return (
     <View style={commonStyles.container} testID="weekly-report-screen">
-      <ScrollView contentContainerStyle={{ paddingVertical: spacing.md }}>
+      <ScrollView testID="weekly-report-scroll-view" contentContainerStyle={{ paddingVertical: spacing.md }}>
         {/* Week Information */}
         <View style={[commonStyles.card, { marginBottom: spacing.lg }]}>
           <Text style={commonStyles.title}>Weekly Report</Text>
@@ -115,20 +116,34 @@ const WeeklyReportScreen = ({ route, navigation }) => {
                 style={[commonStyles.card, { marginBottom: spacing.sm }]}
                 testID={`exercise-total-${exercise.exerciseName}`}
               >
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: spacing.md }}>
                   <View style={{ flex: 1 }}>
                     <Text style={commonStyles.subtitle}>{exercise.exerciseName || 'Unknown Exercise'}</Text>
                     <Text style={commonStyles.textSecondary}>
                       {exercise.muscleGroup?.name || 'Unknown Muscle Group'}
                     </Text>
                   </View>
-                  <View style={{ alignItems: 'flex-end', marginLeft: spacing.md }}>
-                    <Text style={[commonStyles.text, { color: colors.primary }]}>
-                      {exercise.totalReps} reps
-                    </Text>
-                    <Text style={[commonStyles.text, { color: colors.primary }]}>
-                      {exercise.totalWeight} kg
-                    </Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  {/* Reps Metric */}
+                  <View style={{ flex: 1, backgroundColor: colors.background, borderRadius: 10, padding: 12, marginRight: spacing.sm }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm }}>
+                      <Text style={{ fontSize: 10, fontWeight: '600', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.4 }}>Reps</Text>
+                      <ProgressBadge status={exercise.progressStatusRep} testID={`progress-badge-rep-${exercise.exerciseName}`} />
+                    </View>
+                    <Text style={{ fontSize: 20, fontWeight: '800', color: colors.primary, lineHeight: 20 }}>{exercise.totalReps}</Text>
+                    <Text style={{ fontSize: 11, fontWeight: '500', color: colors.textSecondary, marginTop: 2 }}>total reps</Text>
+                  </View>
+
+                  {/* Weight Metric */}
+                  <View style={{ flex: 1, backgroundColor: colors.background, borderRadius: 10, padding: 12, marginLeft: spacing.sm }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm }}>
+                      <Text style={{ fontSize: 10, fontWeight: '600', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.4 }}>Weight</Text>
+                      <ProgressBadge status={exercise.progressStatusWeight} testID={`progress-badge-weight-${exercise.exerciseName}`} />
+                    </View>
+                    <Text style={{ fontSize: 20, fontWeight: '800', color: colors.primary, lineHeight: 20 }}>{exercise.totalWeight}</Text>
+                    <Text style={{ fontSize: 11, fontWeight: '500', color: colors.textSecondary, marginTop: 2 }}>kg</Text>
                   </View>
                 </View>
               </View>

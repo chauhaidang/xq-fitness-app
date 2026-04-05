@@ -1,6 +1,6 @@
 #!/bin/bash
 # Patch script to fix TARGET_IPHONE_SIMULATOR error in Swift code
-# This script can be run after npm install (to patch node_modules) 
+# This script can be run after yarn install (to patch node_modules)
 # and after expo prebuild (to patch ios directory)
 
 set -e

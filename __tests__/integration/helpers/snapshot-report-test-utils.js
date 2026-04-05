@@ -170,14 +170,16 @@ export const verifyExerciseInReport = (renderResult, exercise) => {
     expect(exerciseTexts.length).toBe(1);
   }
 
+  const cardWithin = within(exerciseCard);
+
   // Verify reps if provided
   if (expectedReps !== undefined) {
-    expect(getByText(`${expectedReps} reps`)).toBeTruthy();
+    expect(cardWithin.getByText(expectedReps.toString())).toBeTruthy();
   }
 
   // Verify weight if provided
   if (expectedWeight !== undefined) {
-    expect(getByText(`${expectedWeight} kg`)).toBeTruthy();
+    expect(cardWithin.getByText(expectedWeight.toString())).toBeTruthy();
   }
 };
 
@@ -217,8 +219,7 @@ export const waitForExerciseTotalsSection = async (queryByTestId, options = {}) 
   const { timeout = 5000 } = options;
   
   await waitFor(() => {
-    const exerciseTotalsSection = queryByTestId('exercise-totals-section');
-    return exerciseTotalsSection !== null;
+    expect(queryByTestId('exercise-totals-section')).toBeTruthy();
   }, { timeout });
 };
 

@@ -31,7 +31,7 @@ From **mobile/** (same directory as `test-env/`):
 ```bash
 xq-infra generate -f ./test-env
 xq-infra up
-npm run test:integration
+yarn test:integration
 # When done:
 xq-infra down
 ```
@@ -65,7 +65,7 @@ If startup fails or you see "address already in use":
 
 | Issue | Action |
 |-------|--------|
-| `xq-infra` not found | Run `npm install -g @chauhaidang/xq-test-infra@1.0.3` |
+| `xq-infra` not found | Run `npm install -g @chauhaidang/xq-test-infra@1.0.3` (global tool — uses npm regardless of project package manager) |
 | Port in use | Run `xq-infra down` in other project dirs; stop conflicting containers |
 | Services not ready | Wait a few seconds after `xq-infra up` before running tests |
 | Auth errors (npm) | Ensure `NODE_AUTH_TOKEN` or `.npmrc` for GitHub Packages |

@@ -4,7 +4,7 @@ React Native mobile application for tracking workout routines.
 
 ## Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 18+ and yarn
 - Expo CLI
 - iOS Simulator (Mac) or Android Emulator
 
@@ -12,7 +12,7 @@ React Native mobile application for tracking workout routines.
 
 1. Install dependencies:
 ```bash
-npm install
+yarn install
 ```
 
 2. Install Expo CLI globally (if not already installed):
@@ -30,13 +30,13 @@ npm install -g expo-cli
 5. Start the app:
 ```bash
 # Start Expo dev server
-npm start
+yarn start
 
 # Or start directly on iOS
-npm run ios
+yarn ios
 
 # Or start directly on Android
-npm run android
+yarn android
 ```
 
 ## Features
@@ -89,9 +89,9 @@ The app includes comprehensive testing setup:
 
 ### Component Tests
 ```bash
-npm test              # Run all component tests
-npm run test:watch    # Watch mode
-npm run test:coverage # With coverage report
+yarn test              # Run all component tests
+yarn test:watch        # Watch mode
+yarn test:coverage     # With coverage report
 ```
 
 
