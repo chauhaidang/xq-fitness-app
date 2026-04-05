@@ -179,7 +179,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "25"
           cache: "yarn"
           registry-url: "https://npm.pkg.github.com/"
           scope: "@chauhaidang"
@@ -199,8 +199,17 @@ jobs:
           name: xq-fitness-app
           path: ios/build/Build/Products/Release-iphonesimulator/XQFitness.app
 
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Start backend services
-        run: xq-infra generate -f ./e2e/test-env && xq-infra up
+        run: |
+          xq-infra generate -f ./e2e/test-env
+          xq-infra up
 
       - name: Boot iOS simulator and install app
         run: |
