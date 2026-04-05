@@ -68,12 +68,12 @@ export const config: WebdriverIO.Config = {
     capabilities: [{
         // capabilities for local Appium native app tests on iOS
         platformName: 'iOS',
-        'appium:platformVersion': '18.3',
+        'appium:platformVersion': process.env.SIMULATOR_IOS_VERSION || '18.3',
         'appium:automationName': 'XCUITest',
-        'appium:app': path.join(process.cwd(), 'ios/build/Products/Release-iphonesimulator/XQFitness.app'),
+        'appium:app': path.join(process.cwd(), 'ios/build/Build/Products/Release-iphonesimulator/XQFitness.app'),
         "appium:fullReset": false,
         "appium:noReset": true,
-        "appium:udid": "9D4D7315-746B-47BF-A531-2B2E0E9EDD7D",
+        "appium:udid": process.env.SIMULATOR_UDID || '9D4D7315-746B-47BF-A531-2B2E0E9EDD7D',
     }],
 
     //

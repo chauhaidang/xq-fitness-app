@@ -242,7 +242,7 @@ describe('Exercise Daily Journey Workflow', () => {
                 .execute();
         });
 
-        it.only('should show INCREASED progress status for reps and weight when exercises improve compared to previous week', async () => {
+        it('should show INCREASED progress status for reps and weight when exercises improve compared to previous week', async () => {
             // ===== SETUP: Create routine and workout day via API =====
             const routineName = 'Progress Test ' + kit.generateRandomString(5);
             const routine = await routinesApi.createRoutine({

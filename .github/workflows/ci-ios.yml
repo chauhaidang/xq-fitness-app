@@ -125,6 +125,13 @@ jobs:
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
           echo "Release version: $VERSION"
 
+      - name: Upload app artifact for E2E
+        uses: actions/upload-artifact@v4
+        with:
+          name: xq-fitness-app
+          path: ios/build/Build/Products/Release-iphonesimulator/XQFitness.app
+          retention-days: 1
+
       - name: Zip XQFitness.app
         run: |
           cd ios/build/Build/Products/Release-iphonesimulator
@@ -160,3 +167,79 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  e2e:
+    runs-on: macos-14
+    needs: [build]
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          registry-url: 'https://npm.pkg.github.com/'
+          scope: '@chauhaidang'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install global tools
+        run: |
+          npm install -g @chauhaidang/xq-test-infra@1.0.3
+          npm install -g appium
+          appium driver install xcuitest
+
+      - name: Download app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: xq-fitness-app
+          path: ios/build/Build/Products/Release-iphonesimulator/XQFitness.app
+
+      - name: Start backend services
+        run: xq-infra generate -f ./e2e/test-env && xq-infra up
+
+      - name: Boot iOS simulator and install app
+        run: |
+          RUNTIME=$(xcrun simctl list runtimes -j | jq -r '[.runtimes[] | select(.isAvailable == true) | select(.identifier | contains("iOS"))] | last | .identifier')
+          UDID=$(xcrun simctl list devices available -j | jq -r --arg rt "$RUNTIME" '.devices[$rt][0].udid')
+          IOS_VERSION=$(xcrun simctl list runtimes -j | jq -r --arg rt "$RUNTIME" '.runtimes[] | select(.identifier == $rt) | .version')
+          echo "SIMULATOR_UDID=$UDID" >> $GITHUB_ENV
+          echo "SIMULATOR_IOS_VERSION=$IOS_VERSION" >> $GITHUB_ENV
+          xcrun simctl boot "$UDID"
+          xcrun simctl install "$UDID" ios/build/Build/Products/Release-iphonesimulator/XQFitness.app
+
+      - name: Start Appium
+        run: appium --log-no-colors &
+
+      - name: Wait for Appium to be ready
+        run: |
+          for i in $(seq 1 15); do
+            curl -s http://127.0.0.1:4723/status && break
+            sleep 2
+          done
+
+      - name: Run E2E tests
+        run: yarn test:e2e
+        env:
+          SIMULATOR_UDID: ${{ env.SIMULATOR_UDID }}
+          SIMULATOR_IOS_VERSION: ${{ env.SIMULATOR_IOS_VERSION }}
+
+      - name: Stop backend services
+        if: always()
+        run: |
+          xq-infra logs
+          xq-infra down
+
+      - name: Upload E2E artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-failure-artifacts
+          path: e2e/artifacts/
+          retention-days: 7
