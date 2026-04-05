@@ -6,10 +6,10 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'README.md'
-      - '.github/**'
-      - '.gitignore'
-      - 'LICENSE'
+      - "README.md"
+      - ".github/**"
+      - ".gitignore"
+      - "LICENSE"
 
 env:
   REGISTRY: ghcr.io
@@ -28,7 +28,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         run: yarn install
@@ -51,10 +51,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
-          registry-url: 'https://npm.pkg.github.com/'
-          scope: '@chauhaidang'
+          node-version: "20"
+          cache: "yarn"
+          registry-url: "https://npm.pkg.github.com/"
+          scope: "@chauhaidang"
 
       - name: Install global tools
         run: |
@@ -76,7 +76,7 @@ jobs:
           xq-infra down
 
   build:
-    runs-on: macos-14  # Pin to macOS 14 for consistency (macos-latest now points to macOS 15)
+    runs-on: macos-14 # Pin to macOS 14 for consistency (macos-latest now points to macOS 15)
     needs: [unit, integration]
     permissions:
       contents: write
@@ -88,10 +88,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
-          registry-url: 'https://npm.pkg.github.com/'
-          scope: '@chauhaidang'
+          node-version: "20"
+          cache: "yarn"
+          registry-url: "https://npm.pkg.github.com/"
+          scope: "@chauhaidang"
 
       - name: Show environment info
         run: |
@@ -113,8 +113,6 @@ jobs:
       - name: Build App
         run: |
           yarn bip
-          chmod +x patch-ios-simulator-fix.sh
-          ./patch-ios-simulator-fix.sh
           yarn bi
 
       - name: Get version from package.json
@@ -181,10 +179,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
-          registry-url: 'https://npm.pkg.github.com/'
-          scope: '@chauhaidang'
+          node-version: "20"
+          cache: "yarn"
+          registry-url: "https://npm.pkg.github.com/"
+          scope: "@chauhaidang"
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
