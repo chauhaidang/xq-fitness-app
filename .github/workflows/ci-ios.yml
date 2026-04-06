@@ -76,7 +76,7 @@ jobs:
           xq-infra down
 
   build:
-    runs-on: macos-14 # Pin to macOS 14 for consistency (macos-latest now points to macOS 15)
+    runs-on: macos-13 # Intel runner — required for x86_64 simulator binary compatibility with e2e job
     needs: [unit, integration]
     permissions:
       contents: write
@@ -157,8 +157,8 @@ jobs:
             ### Build Info
             - **Platform:** iOS Simulator
             - **Configuration:** Release
-            - **macOS:** 14
-            - **Xcode:** 15.4
+            - **macOS:** 13
+            - **Xcode:** 15.0
           files: |
             XQFitness-${{ steps.package-version.outputs.version }}.zip
           draft: false
@@ -167,7 +167,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   e2e:
-    runs-on: macos-14
+    runs-on: macos-13
     needs: [build]
     permissions:
       contents: read
@@ -236,6 +236,7 @@ jobs:
 
       - name: Stop backend services
         if: always()
+        working-directory: ./mobile
         run: |
           xq-infra logs
           xq-infra down
