@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST http://localhost:8080/xq-fitness-write-service/api/v1/routines -H 'Content-Type: application/json' -d '{\"name\":\"test-routine\",\"isActive\":true}')",
+      "Bash(curl -s -X DELETE http://localhost:8080/xq-fitness-write-service/api/v1/routines/2)",
+      "Bash(xq-infra generate:*)",
+      "Bash(yarn detox:*)"
+    ]
+  }
+}

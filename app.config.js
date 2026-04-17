@@ -46,7 +46,8 @@ module.exports = {
             deploymentTarget: "13.0"
           }
         }
-      ]
+      ],
+      "@config-plugins/detox"
     ]
   }
 };

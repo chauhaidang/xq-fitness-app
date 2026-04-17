@@ -187,11 +187,12 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Install global tools
+      - name: Install Detox CLI and simulator utils
         run: |
+          npm install -g detox-cli
           npm install -g @chauhaidang/xq-test-infra@1.0.3
-          npm install -g appium
-          appium driver install xcuitest
+          brew tap wix/brew
+          brew install applesimutils
 
       - name: Download app artifact
         uses: actions/download-artifact@v4
@@ -218,18 +219,8 @@ jobs:
           xcrun simctl boot "$UDID"
           xcrun simctl install "$UDID" ios/build/Build/Products/Release-iphonesimulator/XQFitness.app
 
-      - name: Start Appium
-        run: appium --log-no-colors &
-
-      - name: Wait for Appium to be ready
-        run: |
-          for i in $(seq 1 15); do
-            curl -s http://127.0.0.1:4723/status && break
-            sleep 2
-          done
-
-      - name: Run E2E tests
-        run: yarn test:e2e
+      - name: Run Detox E2E tests
+        run: yarn test:detox:ci
         env:
           SIMULATOR_UDID: ${{ env.SIMULATOR_UDID }}
           SIMULATOR_IOS_VERSION: ${{ env.SIMULATOR_IOS_VERSION }}

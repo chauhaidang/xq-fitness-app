@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
         "moduleResolution": "node",
-        "module": "ESNext",
+        "module": "commonjs",
+        "esModuleInterop": true,
         "target": "es2022",
         "lib": [
             "es2022",
@@ -9,19 +10,12 @@
         ],
         "types": [
             "node",
-            "@wdio/globals/types",
-            "expect-webdriverio",
-            "@wdio/mocha-framework",
+            "jest"
         ],
         "skipLibCheck": true,
         "noEmit": true,
-        "allowImportingTsExtensions": true,
         "resolveJsonModule": true,
-        "isolatedModules": true,
-        "strict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+        "strict": false
     },
     "include": [
         "tests",

@@ -182,7 +182,7 @@ const ManageWorkoutDayScreen = ({ route, navigation }) => {
       style={commonStyles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView contentContainerStyle={{ padding: spacing.md }}>
+      <ScrollView testID="manage-workout-day-scroll" contentContainerStyle={{ padding: spacing.md }}>
         <View style={{ marginBottom: spacing.md }}>
           <Text style={commonStyles.label}>Day Number *</Text>
           <TextInput
