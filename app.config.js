@@ -18,7 +18,7 @@ module.exports = {
       bundleIdentifier: "com.xqfitness.app",
       // teamId is only needed for device builds, not simulator builds
       // For simulator builds with free Apple ID, leave this commented out
-      teamId: "2X3976938Y",
+      teamId: "T99X93V7Y2",
       entitlements: {
         "com.apple.developer.applesignin": ["Default"]
       }
@@ -42,7 +42,7 @@ module.exports = {
         "expo-build-properties",
         {
           ios: {
-            developmentTeam: "2X3976938Y",
+            developmentTeam: "T99X93V7Y2",
             deploymentTarget: "13.0"
           }
         }

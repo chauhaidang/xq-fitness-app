@@ -31,6 +31,8 @@ fi
 WORKSPACE="XQFitness.xcworkspace"
 SCHEME="XQFitness"
 CONFIGURATION="Release"
+# Apple Development Team used for code signing. Override with: DEVELOPMENT_TEAM=XXXX sh ./build-device.sh
+DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM:-T99X93V7Y2}"
 DERIVED_DATA_PATH="./build"
 DESTINATION="generic/platform=iOS"
 ARCHIVE_PATH="${DERIVED_DATA_PATH}/XQFitness.xcarchive"
@@ -93,6 +95,8 @@ set -o pipefail && xcodebuild \
   -archivePath "${ARCHIVE_PATH}" \
   -derivedDataPath "${DERIVED_DATA_PATH}" \
   -allowProvisioningUpdates \
+  DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}" \
+  CODE_SIGN_STYLE=Automatic \
   archive || {
     echo ""
     echo "❌ Archive failed. Common issues:"
@@ -108,7 +112,7 @@ echo "Exporting IPA..."
 if [ ! -f "./ExportOptions.plist" ]; then
   echo "⚠️  Warning: ExportOptions.plist not found. Creating a basic one..."
   echo "   You may need to update it with your Team ID and provisioning profile."
-  cat > "./ExportOptions.plist" << 'EOF'
+  cat > "./ExportOptions.plist" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -117,6 +121,8 @@ if [ ! -f "./ExportOptions.plist" ]; then
 	<string>development</string>
 	<key>signingStyle</key>
 	<string>automatic</string>
+	<key>teamID</key>
+	<string>${DEVELOPMENT_TEAM}</string>
 	<key>compileBitcode</key>
 	<false/>
 	<key>stripSwiftSymbols</key>
