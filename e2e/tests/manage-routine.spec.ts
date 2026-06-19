@@ -1,7 +1,7 @@
 import RoutineDetailPage, { createFluentRoutineDetailPage } from './page-objects/routine-detail.page.js';
 import { createFluentMyRoutinesPage } from './page-objects/my-routines.page.js';
 import { createFluentCreateRoutinePage } from './page-objects/create-routine.page.js';
-import * as kit from '@chauhaidang/xq-common-kit';
+import * as kit from '@chauhaidang/xq-harness-common-kit';
 import {Configuration, RoutinesApi, WorkoutDaysApi, WorkoutDaySetsApi} from '@chauhaidang/write-service-api';
 import { MuscleGroupId } from './enum.js';
 

@@ -241,7 +241,7 @@ export default new RoutineTasks();
 ```typescript
 import RoutineTasks from './tasks/routine.tasks.js';
 import WorkoutDayTasks from './tasks/workout-day.tasks.js';
-import * as kit from '@chauhaidang/xq-common-kit';
+import * as kit from '@chauhaidang/xq-harness-common-kit';
 import {Configuration, RoutinesApi} from 'xq-fitness-write-client';
 
 describe('Manage Routine', () => {
@@ -682,4 +682,3 @@ When writing a new E2E test, ensure:
 - [ ] Test is independent and isolated
 - [ ] Test name is descriptive
 - [ ] Code follows naming conventions
-

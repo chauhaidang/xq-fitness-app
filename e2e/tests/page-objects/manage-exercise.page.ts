@@ -2,7 +2,7 @@ import { expect, browser } from '@wdio/globals';
 import ManageExerciseObjects from './objects/manage-exercise.objects.js';
 import Page from './page.js';
 import { createFluentProxy } from '../../support/utils/fluent-proxy.js';
-import { logger } from '@chauhaidang/xq-common-kit';
+import { logger } from '@chauhaidang/xq-harness-common-kit';
 
 /**
  * Page object for the "Manage Exercise" screen

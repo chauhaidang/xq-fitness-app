@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@chauhaidang/xq-common-kit": "^1.0.12",
+    "@chauhaidang/xq-harness-common-kit": "0.1.0",
     "@stoplight/prism-cli": "^5.4.0",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.3.3",

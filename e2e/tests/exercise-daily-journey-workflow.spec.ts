@@ -2,7 +2,7 @@ import { createFluentRoutineDetailPage } from './page-objects/routine-detail.pag
 import { createFluentMyRoutinesPage } from './page-objects/my-routines.page.js';
 import { createFluentManageExercisePage } from './page-objects/manage-exercise.page.js';
 import { createFluentWeeklyReportPage } from './page-objects/weekly-report.page.js';
-import * as kit from '@chauhaidang/xq-common-kit';
+import * as kit from '@chauhaidang/xq-harness-common-kit';
 import { Configuration, RoutinesApi, WorkoutDaysApi, WorkoutDaySetsApi, ExercisesApi, SnapshotsApi } from '@chauhaidang/write-service-api';
 import { MuscleGroupId } from './enum.js';
 import { shiftLatestSnapshotToPreviousWeek } from '../support/utils/db-helper.js';
