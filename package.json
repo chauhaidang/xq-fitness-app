@@ -22,7 +22,7 @@
     "deploy-sim": "./deploy-sim.sh",
     "build-and-deploy": "yarn bi && yarn deploy-sim",
     "ls-device": "xcrun simctl list devices available",
-    "bid": "unset E2E && GATEWAY_URL='https://xq-fitness-udfuy.ondigitalocean.app' cd ios && pod update && pod install && sh ./build-device.sh",
+    "bid": "unset E2E && export GATEWAY_URL='https://xq-fitness-udfuy.ondigitalocean.app' && cd ios && pod update && pod install && sh ./build-device.sh",
     "deploy-device": "ios-deploy --id 00008150-0012058A14F8401C -b ios/build/Export/XQFitness.ipa",
     "copy-app": "rm -rf build && mkdir -p build && cp -r ./ios/build/Products/Release-iphonesimulator/XQFitness.app ./build/XQFitness.app",
     "e2e:analyze-dom": "tsx e2e/scripts/analyze-dom-trees.ts",

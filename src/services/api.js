@@ -4,9 +4,7 @@ import Constants from 'expo-constants';
 // Get gateway URL from Expo config or fallback to localhost
 const GATEWAY_URL = Constants.expoConfig?.extra?.gatewayUrl || 'http://localhost:8080';
 
-// Change these URLs to match your backend services
-// For local development, use your machine's IP address instead of localhost
-const READ_SERVICE_URL = `${GATEWAY_URL}/xq-fitness-read-service/api/v1`;
+// Unified backend URL. For local development, use your machine's IP address instead of localhost.
 const WRITE_SERVICE_URL = `${GATEWAY_URL}/xq-fitness-write-service/api/v1`;
 
 /**
@@ -120,9 +118,9 @@ const setupApiLogging = (apiInstance, serviceName) => {
   );
 };
 
-// Create axios instances for each service
+// Read endpoints are served by write-service during read-service retirement.
 const readApi = axios.create({
-  baseURL: READ_SERVICE_URL,
+  baseURL: WRITE_SERVICE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -138,10 +136,10 @@ const writeApi = axios.create({
 });
 
 // Setup logging for both API instances
-setupApiLogging(readApi, 'ReadService');
+setupApiLogging(readApi, 'WriteServiceRead');
 setupApiLogging(writeApi, 'WriteService');
 
-// Read Service API calls
+// Read API calls served by write-service
 export const getMuscleGroups = async () => {
   const response = await readApi.get('/muscle-groups');
   return response.data;
@@ -239,7 +237,7 @@ export const getWeeklyReport = async (routineId) => {
   return response.data;
 };
 
-// Exercise API calls (Write Service: create, get by id, update, delete; Read Service: list)
+// Exercise API calls
 /**
  * Creates an exercise for a workout day and muscle group
  * @param {Object} data - { workoutDayId, muscleGroupId, exerciseName, totalReps?, weight?, totalSets?, notes? }
@@ -270,7 +268,7 @@ export const getExerciseById = async (exerciseId) => {
 };
 
 /**
- * Lists exercises for a workout day, optionally filtered by muscle group (Read Service)
+ * Lists exercises for a workout day, optionally filtered by muscle group
  * @param {number} workoutDayId - Workout day ID
  * @param {number|null} muscleGroupId - Optional muscle group ID filter
  * @returns {Promise<Array>} List of exercises
