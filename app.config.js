@@ -34,7 +34,7 @@ module.exports = {
       eas: {
         projectId: "8083ea40-83b9-4181-b677-151380acb2b2"
       },
-      gatewayUrl: !process.env.E2E ? process.env.GATEWAY_URL : "http://localhost:8080",
+      gatewayUrl: process.env.GATEWAY_URL,
       enableApiLogging: process.env.ENABLE_API_LOGGING === 'true'
     },
     plugins: [

@@ -101,7 +101,7 @@ yarn test:coverage     # With coverage report
 - API calls are made to separate read and write microservices
 - All data is stored in PostgreSQL via the backend services
 - The app requires active network connection to function
-- Comprehensive test suite with 34 component tests and Detox E2E tests
+- Comprehensive test suite with unit and integration tests
 
 
 ## Useful commands:

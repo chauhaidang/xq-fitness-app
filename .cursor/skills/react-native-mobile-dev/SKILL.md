@@ -64,7 +64,6 @@ Keep API calls in `src/services/api.js`; screens call these functions. Do not mo
 |-------|---------|----------|-------------|
 | **Unit** | Fast, isolated; mock API | `__tests__/screens/`, `__tests__/components/` | `yarn test:unit` |
 | **Integration** | Real API; backend must be running | `__tests__/integration/` | `yarn test:integration` |
-| **E2E** | Full app on device/simulator | Detox config | `detox test` |
 
 ### Unit tests
 
@@ -80,11 +79,6 @@ Keep API calls in `src/services/api.js`; screens call these functions. Do not mo
 - File naming: `*Screen.integration.test.js` or `*Flow.integration.test.js`
 - Backend: run `xq-infra generate -f ./test-env` and `xq-infra up` before `yarn test:integration`
 
-### E2E (Detox)
-
-- Use for critical user flows on real/simulator builds
-- Keep E2E suite small; rely on unit + integration for coverage
-
 ## 5. Workflow Checklist
 
 ```
@@ -96,7 +90,6 @@ Task Progress:
 - [ ] Add unit tests (mocked API)
 - [ ] Add integration tests (real API, if applicable)
 - [ ] Run test:unit and test:integration
-- [ ] Add/update E2E for critical flows (if needed)
 ```
 
 ## Additional Resources

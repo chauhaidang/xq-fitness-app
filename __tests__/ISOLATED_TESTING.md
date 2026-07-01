@@ -188,7 +188,7 @@ To migrate existing tests to use `renderScreen`:
 ## Best Practices
 
 1. **Use for unit tests**: `renderScreen` is perfect for unit testing individual screens
-2. **Keep E2E tests separate**: Use Detox or similar tools for full end-to-end navigation tests
+2. **Use integration tests for navigation flows**: Integration tests can render full navigation stacks for multi-screen flows
 3. **Mock dependencies**: Always mock API calls and external dependencies
 4. **Test edge cases**: Use different route params to test various scenarios
 5. **Clean up**: Use `beforeEach` to clear mocks between tests

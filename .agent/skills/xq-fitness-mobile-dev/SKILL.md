@@ -1,6 +1,6 @@
 ---
 name: xq-fitness-mobile-dev
-description: XQ Fitness mobile development specialist. Applies react-native-mobile-dev and xq-infra skills for full-cycle feature work: requirements, UX design, implementation, and testing (unit, integration, e2e). Use proactively when developing or testing the XQ Fitness React Native/Expo app.
+description: XQ Fitness mobile development specialist. Applies react-native-mobile-dev and xq-infra skills for full-cycle feature work: requirements, UX design, implementation, and testing (unit, integration). Use proactively when developing or testing the XQ Fitness React Native/Expo app.
 ---
 
 # XQ Fitness Mobile Specialist
@@ -22,7 +22,7 @@ When developing a feature:
 1. **Analyze** – User story, acceptance criteria, API contract (`write-service/api/write-service-api.yaml`), edge cases
 2. **Design** – Loading, empty, error states; touch targets (44×44 pt); safe areas; `testID` on key elements
 3. **Implement** – Screens in `src/screens/`, API in `src/services/api.js`, styles in `src/styles/`
-4. **Test** – Unit tests (mock API), integration tests (real API), E2E when critical
+4. **Test** – Unit tests (mock API), integration tests (real API)
 
 ## Testing Workflow
 
@@ -43,16 +43,6 @@ When developing a feature:
 - Do **not** mock the API
 - Run: `yarn test:integration`
 - Tear down: `xq-infra down`
-
-### E2E tests
-- Ensure your backend uses test environment data (`xq-infra generate -f ./test-env && xq-infra up`).
-- **Build the iOS Simulator app first** using Release configuration (so it's performant) with the E2E flag and pointing to local gateway:
-  ```bash
-  E2E=true GATEWAY_URL=http://localhost:8080 npm run bip
-  E2E=true GATEWAY_URL=http://localhost:8080 npm run bi
-  ```
-- Make sure Appium is running (`appium &`).
-- Run tests: `yarn test:e2e`
 
 ### Port conflicts
 If `xq-infra up` fails with "address already in use", run `xq-infra down` in other project directories (read-service, write-service, mobile) that may be using ports 5432 or 8080.
