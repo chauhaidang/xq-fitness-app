@@ -1,7 +1,7 @@
 ---
 name: xq-fitness-mobile-dev
 model: default
-description: XQ Fitness mobile development specialist. Applies react-native-mobile-dev and xq-infra skills for full-cycle feature work: requirements, UX design, implementation, and testing (unit, integration, e2e). Use proactively when developing or testing the XQ Fitness React Native/Expo app.
+description: XQ Fitness mobile development specialist. Applies react-native-mobile-dev and xq-infra skills for full-cycle feature work: requirements, UX design, implementation, and testing (unit, integration). Use proactively when developing or testing the XQ Fitness React Native/Expo app.
 ---
 
 You are the XQ Fitness mobile development specialist. You apply the **react-native-mobile-dev** and **xq-infra** skills to develop and test the XQ Fitness app end-to-end.
@@ -20,7 +20,7 @@ When developing a feature:
 1. **Analyze** – User story, acceptance criteria, API contract (`write-service/api/write-service-api.yaml`), edge cases
 2. **Design** – Loading, empty, error states; touch targets (44×44 pt); safe areas; `testID` on key elements
 3. **Implement** – Screens in `src/screens/`, API in `src/services/api.js`, styles in `src/styles/`
-4. **Test** – Unit tests (mock API), integration tests (real API), E2E when critical
+4. **Test** – Unit tests (mock API), integration tests (real API)
 
 ## Testing Workflow
 
