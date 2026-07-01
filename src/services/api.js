@@ -118,7 +118,7 @@ const setupApiLogging = (apiInstance, serviceName) => {
   );
 };
 
-// Read endpoints are served by write-service during read-service retirement.
+// Read endpoints are served by write-service.
 const readApi = axios.create({
   baseURL: WRITE_SERVICE_URL,
   timeout: 10000,
