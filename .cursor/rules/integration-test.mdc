@@ -5,11 +5,11 @@ alwaysApply: false
 
 # Mobile Integration Test Rules
 
-When running or updating integration tests for the mobile app, follow the project's standard workflow. Integration tests make **real API calls** to the gateway and require the backend (read service, write service, gateway) to be running.
+When running or updating integration tests for the mobile app, follow the project's standard workflow. Integration tests make **real API calls** to the gateway and require write-service and the gateway to be running.
 
 ## Principles
 
-- **Integration tests use real API calls.** No mocks or stubs for API services. Tests call the actual gateway URL; request and response payloads must match the API contracts (`api/read-service-api.yaml`, `api/write-service-api.yaml`).
+- **Integration tests use real API calls.** No mocks or stubs for API services. Tests call the actual gateway URL; request and response payloads must match the API contract (`write-service/api/write-service-api.yaml`).
 - **Test location:** All integration tests live in `__tests__/integration/` and use the `*.integration.test.js` naming pattern.
 - **Use test utilities:** Use `renderScreenWithApi`, `waitForApiCall`, `waitForLoadingToFinish`, `createTestRoutine` from `__tests__/integration/helpers/test-utils.js`. Do not mock the API module in integration tests.
 
@@ -25,7 +25,7 @@ xq-infra generate -f ./test-env
 xq-infra up
 ```
 
-The test environment is defined in **test-env/** (xq-fitness-db, xq-fitness-read-service, xq-fitness-write-service, and the auto-injected xq-gateway). Do not use a different path.
+The test environment is defined in **test-env/** (xq-fitness-db, xq-fitness-write-service, and the auto-injected xq-gateway). Do not use a different path.
 
 ### 2. Run integration tests
 
@@ -36,8 +36,7 @@ npm run test:integration
 ```
 
 Defaults use the test-env gateway: `GATEWAY_URL=http://localhost:8080`. The app resolves:
-- Read Service: `${GATEWAY_URL}/xq-fitness-read-service/api/v1`
-- Write Service: `${GATEWAY_URL}/xq-fitness-write-service/api/v1`
+- `${GATEWAY_URL}/xq-fitness-write-service/api/v1` (read and write endpoints)
 
 To use a custom gateway URL:
 
@@ -67,7 +66,7 @@ xq-infra down
 
 ## Port conflicts
 
-- If the environment fails to start or you see "address already in use", check for other stacks (e.g. read-service or write-service test env) using the same ports. Run `xq-infra down` in those service directories or stop conflicting containers.
+- If the environment fails to start or you see "address already in use", check for other stacks (e.g. write-service test env) using the same ports. Run `xq-infra down` in those service directories or stop conflicting containers.
 - Avoid running multiple test envs that share host ports (e.g. 5432 for DB, 8080 for gateway).
 
 ## Summary checklist

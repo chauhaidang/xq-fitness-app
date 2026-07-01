@@ -5,12 +5,12 @@ description: Workflow for implementing, running, and debugging mobile integratio
 
 # Mobile Integration Tests
 
-Mobile integration tests make **real API calls** to the gateway and require the backend (read service, write service, gateway) to be running.
+Mobile integration tests make **real API calls** to the gateway and require write-service and the gateway to be running.
 
 ## Principles
 
 - **Real API calls**: No mocks or stubs for API services. Tests call the actual gateway URL.
-- **Contract Adherence**: Request and response payloads must match the API contracts (`api/read-service-api.yaml`, `api/write-service-api.yaml`).
+- **Contract Adherence**: Request and response payloads must match the API contract (`write-service/api/write-service-api.yaml`).
 - **Location**: `__tests__/integration/`.
 - **Naming**: `*.integration.test.js`.
 - **Utilities**: Use `renderScreenWithApi`, `waitForApiCall`, `waitForLoadingToFinish`, `createTestRoutine` from `__tests__/integration/helpers/test-utils.js`.

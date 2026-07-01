@@ -15,7 +15,6 @@
     "test:integration:watch": "GATEWAY_URL=http://localhost:8080 jest --config=jest.integration.config.js --watch",
     "test:all": "yarn test:unit && yarn test:integration",
     "test:e2e": "wdio run ./e2e/config/wdio.conf.ts",
-    "mock:api": "prism mock api/read-service-api.yaml api/write-service-api.yaml --errors",
     "download:api": "rm -rf xq-apis/ && ./scripts/download-api-files.sh",
     "bip": "E2E=true GATEWAY_URL=http://localhost:8080 expo prebuild --no-install --platform ios && cp build-sim.sh ios/build-sim.sh && chmod +x ios/build-sim.sh && cp build-device.sh ios/build-device.sh && chmod +x ios/build-device.sh",
     "bi": "cd ios && pod update && pod install && E2E=true GATEWAY_URL=http://localhost:8080 sh ./build-sim.sh && cd ..",
@@ -51,7 +50,6 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@chauhaidang/xq-harness-common-kit": "0.1.0",
-    "@stoplight/prism-cli": "^5.4.0",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.3.3",
     "@types/node": "^24.10.1",
@@ -74,8 +72,7 @@
     "jest-junit": "^16.0.0",
     "pg": "^8.20.0",
     "react-test-renderer": "^18.2.0",
-    "@chauhaidang/write-service-api": "1.3.0",
-    "@chauhaidang/read-service-api": "1.3.1"
+    "@chauhaidang/write-service-api": "1.3.0"
   },
   "private": true,
   "jest-junit": {

@@ -20,7 +20,7 @@ Requires GitHub Packages access (`registry-url: https://npm.pkg.github.com/`, sc
 | Command | Purpose |
 |---------|---------|
 | `xq-infra generate -f ./test-env` | Generate config from `test-env/` (e.g. nginx-gateway.conf) |
-| `xq-infra up` | Start all services (DB, read-service, write-service, gateway) |
+| `xq-infra up` | Start all services (DB, write-service, gateway) |
 | `xq-infra down` | Stop and remove containers |
 | `xq-infra logs` | Show container logs (useful when debugging) |
 
@@ -42,7 +42,6 @@ xq-infra down
 
 - **xq.config.yml**: Port range, dependency groups (e.g. `database`)
 - **xq-fitness-db.service.yml**: PostgreSQL (port 5432)
-- **xq-fitness-read-service.service.yml**: Read API (port 8080)
 - **xq-fitness-write-service.service.yml**: Write API (port 3000)
 - **xq-gateway**: Auto-injected by xq-infra; exposes services on port 8080
 
@@ -50,14 +49,13 @@ xq-infra down
 
 Integration tests use `GATEWAY_URL=http://localhost:8080` (default). The app resolves:
 
-- Read: `${GATEWAY_URL}/xq-fitness-read-service/api/v1`
 - Write: `${GATEWAY_URL}/xq-fitness-write-service/api/v1`
 
 ## Port Conflicts
 
 If startup fails or you see "address already in use":
 
-1. Check for other stacks (read-service, write-service, mobile) using the same ports
+1. Check for other stacks (write-service, mobile) using the same ports
 2. Run `xq-infra down` in those project directories
 3. Avoid running multiple test envs that share ports (5432, 8080)
 

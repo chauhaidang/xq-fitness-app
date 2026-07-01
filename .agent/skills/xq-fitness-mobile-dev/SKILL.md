@@ -19,7 +19,7 @@ When this skill is active, you MUST also reference and apply:
 
 When developing a feature:
 
-1. **Analyze** – User story, acceptance criteria, API contracts (`api/read-service-api.yaml`, `api/write-service-api.yaml`), edge cases
+1. **Analyze** – User story, acceptance criteria, API contract (`write-service/api/write-service-api.yaml`), edge cases
 2. **Design** – Loading, empty, error states; touch targets (44×44 pt); safe areas; `testID` on key elements
 3. **Implement** – Screens in `src/screens/`, API in `src/services/api.js`, styles in `src/styles/`
 4. **Test** – Unit tests (mock API), integration tests (real API), E2E when critical

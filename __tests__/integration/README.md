@@ -30,9 +30,7 @@ Integration tests make **real API calls** to the gateway:
 Integration tests call the **actual gateway URL** directly:
 
 - **Gateway URL**: Configured via `GATEWAY_URL` environment variable or defaults to `http://localhost:8080`
-- **API Service URLs**: 
-  - Read Service: `${GATEWAY_URL}/xq-fitness-read-service/api/v1`
-  - Write Service: `${GATEWAY_URL}/xq-fitness-write-service/api/v1`
+- **API base URL**: `${GATEWAY_URL}/xq-fitness-write-service/api/v1` — both read and write endpoints are served by write-service
 
 ### Setting Gateway URL
 
@@ -53,7 +51,7 @@ GATEWAY_URL=https://api.example.com yarn test:integration
 
 Before running integration tests:
 1. **Gateway must be running** - The gateway service must be accessible at the configured URL
-2. **Backend services must be running** - Read and write services must be running and accessible via the gateway
+2. **Backend services must be running** - write-service must be running and accessible via the gateway (serves both read and write APIs)
 3. **Database must be available** - Backend services need database access
 4. **Test data may be required** - Some tests may require specific test data in the database
 
@@ -203,11 +201,10 @@ Integration tests verify:
 
 ### API Path Configuration
 
-The API service constructs URLs with service prefixes:
-- Read: `${GATEWAY_URL}/xq-fitness-read-service/api/v1`
-- Write: `${GATEWAY_URL}/xq-fitness-write-service/api/v1`
+The API service constructs URLs with the write-service prefix:
+- `${GATEWAY_URL}/xq-fitness-write-service/api/v1` (read and write endpoints)
 
-Integration tests use the actual gateway URL (from `GATEWAY_URL` environment variable or default `http://localhost:8080`). The gateway routes requests to the appropriate backend services.
+Integration tests use the actual gateway URL (from `GATEWAY_URL` environment variable or default `http://localhost:8080`). The gateway routes requests to write-service.
 
 ## Troubleshooting
 
@@ -239,9 +236,9 @@ Integration tests use the actual gateway URL (from `GATEWAY_URL` environment var
 2. Check if gateway and backend services are running:
    ```bash
    # Check gateway
-   curl http://localhost:8080/xq-fitness-read-service/api/v1/muscle-groups
+   curl http://localhost:8080/xq-fitness-write-service/api/v1/muscle-groups
    
-   # Check write service via gateway
+   # Check write endpoints via gateway
    curl http://localhost:8080/xq-fitness-write-service/api/v1/routines
    ```
 
