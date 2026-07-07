@@ -29,12 +29,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
 
       - name: Run unit tests
-        run: yarn test:unit
+        run: npm run test:unit
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
@@ -52,7 +53,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "yarn"
+          cache: "npm"
           registry-url: "https://npm.pkg.github.com/"
           scope: "@chauhaidang"
 
@@ -61,13 +62,13 @@ jobs:
           npm install -g @chauhaidang/xq-test-infra@1.0.3
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Start up environment
         run: xq-infra generate -f ./test-env && xq-infra up
 
       - name: Run integration tests
-        run: yarn test:integration
+        run: npm run test:integration
 
       - name: Stop environment
         if: always()
@@ -89,7 +90,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "yarn"
+          cache: "npm"
           registry-url: "https://npm.pkg.github.com/"
           scope: "@chauhaidang"
 
@@ -108,12 +109,12 @@ jobs:
           xcrun simctl list devices available | head -20
 
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
 
       - name: Build App
         run: |
-          yarn bip
-          yarn bi
+          npm run bip
+          npm run bi
 
       - name: Get version from package.json
         id: package-version
